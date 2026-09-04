@@ -29,10 +29,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // ИСПОЛЬЗУЕМ КЛЮЧ ИЗ ДОКУМЕНТАЦИИ
-    const token = "IKXu90uUnEbEmD1MNEqToFgaywAkgjdmMpMML3Uc1Hg=";
+    // ПРОБУЕМ РАЗНЫЕ ВАРИАНТЫ ТОКЕНА
+    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
+    // Добавляем все возможные поля
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -44,6 +45,10 @@ export default async function handler(req, res) {
         amount: Number(Number(amount).toFixed(2)),
         currency: currency || "USD",
         type_form: 1,
+        // Пробуем добавить эти поля
+        success_url: "https://japopa7-prog.github.io/wiggle-house/",
+        cancel_url: "https://japopa7-prog.github.io/wiggle-house/",
+        description: "Wiggle House order",
       }),
     });
 
