@@ -842,7 +842,7 @@
   const BXB_WORKER_ENDPOINT = "https://wiggle-house.vercel.app/api/payment";
   // Switch to false only once you've fully tested with the TEST token above
   // and are ready to take real payments with the PROD token.
-  const BXB_TEST_MODE = false;
+  const BXB_TEST_MODE = true;
   const BXB_WIDGET_JS = BXB_TEST_MODE
     ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
     : "https://pgate.bxb.delivery/js/bxbpay-widget.js";
@@ -1158,33 +1158,42 @@
     btn.textContent = 'Loading payment form…';
     btn.disabled = true;
 
+    // ФОРМИРУЕМ ДАННЫЕ ОДИНАКОВО ДЛЯ ВСЕХ ЗАПРОСОВ
     const amountStr = lastOrderInfo.total.toFixed(2);
+    const amountNum = Number(amountStr);
     const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
-    const description = lastOrderInfo.itemsSummary.slice(0, 250);
 
     try {
+      // 1. ПОЛУЧАЕМ payment_token
       const res = await fetch(BXB_WORKER_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ invoiceNumber, amount: amountStr, currency: 'USD' })
+        body: JSON.stringify({
+          invoiceNumber: invoiceNumber,
+          amount: amountNum,
+          currency: 'USD'
+        })
       });
-      let data;
+
       const rawText = await res.text();
+      let data;
       try { data = JSON.parse(rawText); } catch(parseErr){
-        throw new Error(`DEBUG: worker returned non-JSON (status ${res.status}): ${rawText.slice(0,300)}`);
+        throw new Error(`Worker returned non-JSON: ${rawText.slice(0,300)}`);
       }
       if (!data.result || !data.token){
-        throw new Error(`DEBUG: worker responded (status ${res.status}) with: ${JSON.stringify(data).slice(0,300)}`);
+        throw new Error(`Worker error: ${JSON.stringify(data).slice(0,300)}`);
       }
 
+      // 2. ЗАГРУЖАЕМ СКРИПТ ВИДЖЕТА
       await loadBxbScript();
       const widgetEl = document.getElementById('bxbpay-widget');
       widgetEl.style.display = 'block';
       btn.style.display = 'none';
 
+      // 3. ОТКРЫВАЕМ ВИДЖЕТ (все данные совпадают с запросом)
       const widgetOrder = {
         invoiceNumber: invoiceNumber,
-        description: description || "Wiggle House order",
+        description: lastOrderInfo.itemsSummary.slice(0, 250) || "Wiggle House order",
         amount: amountStr,
         currency: 'USD',
         email: lastOrderInfo.email || "customer@example.com",
@@ -1198,15 +1207,14 @@
           zip: lastOrderInfo.zip || "10001",
           countryCode: 840
         },
-        // ===== ДОБАВЛЯЕМ ОБЪЕКТ shipping =====
         shipping: {
-          goodsCost: Number(amountStr)
+          goodsCost: amountNum
         }
-        // ===================================
       };
 
-      console.log('=== Opening BXB widget with order ===');
-      console.log(JSON.stringify(widgetOrder, null, 2));
+      console.log('=== Opening BXB widget ===');
+      console.log('Token:', data.token);
+      console.log('Order:', JSON.stringify(widgetOrder, null, 2));
 
       window.bxbPayWidget.open({
         element: '#bxbpay-widget',
