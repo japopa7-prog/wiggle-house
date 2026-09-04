@@ -1207,9 +1207,13 @@
           zip: lastOrderInfo.zip || "10001",
           countryCode: 840
         },
+        // ===== ДОБАВЛЯЕМ ОБЪЕКТ shipping =====
         shipping: {
-          goodsCost: amountNum
+          goodsCost: amountNum,
+          deliveryCost: 0,
+          deliveryService: 'BXB'
         }
+        // ===================================
       };
 
       console.log('=== Opening BXB widget ===');
