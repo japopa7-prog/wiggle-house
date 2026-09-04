@@ -29,28 +29,11 @@ export default async function handler(req, res) {
       });
     }
 
-    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p";
-    const apiBase = "https://pgate.bxb.delivery";
+    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
+    const apiBase = "https://pgate-dev.bxb.delivery";
 
-    // Убедимся, что сумма передаётся правильно
-    const parsedAmount = parseFloat(amount);
-    if (isNaN(parsedAmount) || parsedAmount <= 0) {
-      return res.status(400).json({
-        result: false,
-        error: "Invalid amount"
-      });
-    }
-
-    const requestBody = {
-      invoiceNumber: String(invoiceNumber).slice(0, 20),
-      amount: Math.round(parsedAmount * 100) / 100, // 2 знака после запятой
-      currency: currency || "USD",
-      type_form: 1
-    };
-
-    console.log("=== SENDING TO BXB ===");
-    console.log("URL:", `${apiBase}/api/v1/payment`);
-    console.log("Body:", JSON.stringify(requestBody, null, 2));
+    // ===== ГЛАВНОЕ ИЗМЕНЕНИЕ: amount как ЧИСЛО, а не строка =====
+    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : Number(amount);
 
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
@@ -58,29 +41,35 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        invoiceNumber: String(invoiceNumber).slice(0, 20),
+        amount: numericAmount,
+        currency: currency || "USD",
+        type_form: 1,
+        description: "Wiggle House order",
+        email: "customer@example.com",
+        customer_id: "cust_" + Date.now(),
+        billTo: {
+          firstName: "John",
+          lastName: "Doe",
+          address: "123 Main St",
+          city: "New York",
+          state: "NY",
+          zip: "10001",
+          countryCode: "840"
+        },
+        shipping: {
+          goodsCost: numericAmount
+        }
+      }),
     });
 
-    // Получаем текст ответа
-    const responseText = await bxbRes.text();
-    console.log("=== BXB RAW RESPONSE ===");
-    console.log("Status:", bxbRes.status);
-    console.log("Raw:", responseText);
-
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error("Failed to parse JSON:", e);
-      data = { result: false, error: "Invalid JSON response from BXB", raw: responseText };
-    }
+    const data = await bxbRes.json();
 
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(bxbRes.status).json(data);
 
   } catch (err) {
-    console.error("=== CATCH ERROR ===");
-    console.error(err);
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(500).json({
       result: false,
