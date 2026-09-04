@@ -1,7 +1,7 @@
 // api/payment.js
 export default async function handler(req, res) {
   const corsHeaders = {
-    "Access-Control-Allow-Origin": "*", // Укажи свой домен, например "https://japopa7-prog.github.io"
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
@@ -23,18 +23,16 @@ export default async function handler(req, res) {
 
     if (!invoiceNumber || !amount || !currency) {
       res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
-      return res.status(400).json({
-        result: false,
-        error: "Missing invoiceNumber, amount, or currency"
-      });
+      return res.status(400).json({ result: false, error: "Missing invoiceNumber, amount, or currency" });
     }
 
-    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p"; // ПРОДОВЫЙ ТОКЕН
+    // ==== ТВОЙ ПРОДОВЫЙ ТОКЕН ====
+    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p";
     const apiBase = "https://pgate.bxb.delivery";
 
+    // Сумма обязательно с 2 знаками после запятой
     const numericAmount = Number(amount).toFixed(2);
 
-    // ===== ЗДЕСЬ ГЛАВНОЕ ИЗМЕНЕНИЕ =====
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -45,28 +43,15 @@ export default async function handler(req, res) {
         invoiceNumber: String(invoiceNumber).slice(0, 20),
         amount: numericAmount,
         currency: currency || "USD",
-        type_form: 2, // <--- ИЗМЕНИЛИ НА 2 (форма с доставкой)
+        type_form: 1, // 1 = Обычная форма карты (без деталей доставки)
         description: "Wiggle House order",
         email: email || "customer@example.com",
-        customer_id: email || "cust_" + Date.now(),
-        billTo: {
-          firstName: "John",
-          lastName: "Doe",
-          address: "123 Main St",
-          city: "New York",
-          state: "NY",
-          zip: "10001",
-          countryCode: "840"
-        },
-        shipping: {
-          goodsCost: numericAmount, // <--- ДОБАВИЛИ СТОИМОСТЬ ТОВАРА
-          deliveryCost: 0,
-          deliveryService: "BXB"
-        }
+        customer_id: email || "cust_" + Date.now()
       }),
     });
 
     const data = await bxbRes.json();
+
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(bxbRes.status).json(data);
 
