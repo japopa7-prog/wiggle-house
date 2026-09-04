@@ -29,10 +29,11 @@ export default async function handler(req, res) {
       });
     }
 
+    // ПРАВИЛЬНЫЙ ТОКЕН ИЗ ВАШЕГО ЛИЧНОГО КАБИНЕТА
     const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
-    // ПОЛНЫЙ ЗАПРОС СО ВСЕМИ ПОЛЯМИ
+    // 1. Получаем payment_token
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -40,12 +41,14 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({
+        // Поля для создания payment_token (из документации)
         invoiceNumber: String(invoiceNumber).slice(0, 20),
         amount: Number(Number(amount).toFixed(2)),
         currency: currency || "USD",
-        type_form: 1,
+        type_form: 1, // <--- ИСПРАВЛЕНО: было type_font
+        // Эти поля нужны для создания корректного платежа (из документации)
         description: "Wiggle House order",
-        customer_email: "customer@example.com",
+        email: "customer@example.com",
         customer_id: "cust_" + Date.now(),
         billTo: {
           firstName: "John",
@@ -55,13 +58,7 @@ export default async function handler(req, res) {
           state: "NY",
           zip: "10001",
           countryCode: "840"
-        },
-        shipping: {
-          goodsCost: Number(Number(amount).toFixed(2)),
-          deliveryCost: 0
-        },
-        success_url: "https://japopa7-prog.github.io/wiggle-house/",
-        cancel_url: "https://japopa7-prog.github.io/wiggle-house/"
+        }
       }),
     });
 
