@@ -1,13 +1,11 @@
 // api/payment.js
 export default async function handler(req, res) {
-  // CORS настройки
   const corsHeaders = {
     "Access-Control-Allow-Origin": "https://japopa7-prog.github.io",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
 
-  // Обработка preflight запроса (OPTIONS)
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     res.setHeader("Access-Control-Allow-Methods", corsHeaders["Access-Control-Allow-Methods"]);
@@ -15,7 +13,6 @@ export default async function handler(req, res) {
     return res.status(200).end();
   }
 
-  // Разрешаем только POST
   if (req.method !== "POST") {
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(405).json({ result: false, error: "Method not allowed" });
@@ -32,11 +29,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // ТЕСТОВЫЙ ТОКЕН
-    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
+    // ИСПОЛЬЗУЕМ КЛЮЧ ИЗ ДОКУМЕНТАЦИИ
+    const token = "IKXu90uUnEbEmD1MNEqToFgaywAkgjdmMpMML3Uc1Hg=";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
-    // Формируем полный запрос к BXB
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -48,27 +44,11 @@ export default async function handler(req, res) {
         amount: Number(Number(amount).toFixed(2)),
         currency: currency || "USD",
         type_form: 1,
-        description: "Order from Wiggle House",
-        // Добавляем все обязательные поля
-        customer: {
-          email: "customer@example.com",
-          phone: "+1234567890",
-        },
-        billingAddress: {
-          country: "US",
-          state: "NY",
-          city: "New York",
-          address: "123 Main St",
-          zip: "10001",
-        },
-        successUrl: "https://japopa7-prog.github.io/wiggle-house/",
-        cancelUrl: "https://japopa7-prog.github.io/wiggle-house/",
       }),
     });
 
     const data = await bxbRes.json();
 
-    // Отправляем ответ с CORS
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(bxbRes.status).json(data);
 
