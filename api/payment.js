@@ -32,10 +32,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // ТЕСТОВЫЙ ТОКЕН (вставлен напрямую для проверки)
+    // ТЕСТОВЫЙ ТОКЕН
     const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
+    // Формируем полный запрос к BXB
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -45,10 +46,23 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         invoiceNumber: String(invoiceNumber).slice(0, 20),
         amount: Number(Number(amount).toFixed(2)),
-        currency,
+        currency: currency || "USD",
         type_form: 1,
         description: "Order from Wiggle House",
-        customer_id: "customer_" + Date.now(),
+        // Добавляем все обязательные поля
+        customer: {
+          email: "customer@example.com",
+          phone: "+1234567890",
+        },
+        billingAddress: {
+          country: "US",
+          state: "NY",
+          city: "New York",
+          address: "123 Main St",
+          zip: "10001",
+        },
+        successUrl: "https://japopa7-prog.github.io/wiggle-house/",
+        cancelUrl: "https://japopa7-prog.github.io/wiggle-house/",
       }),
     });
 
