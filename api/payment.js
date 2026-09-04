@@ -29,30 +29,44 @@ export default async function handler(req, res) {
       });
     }
 
-    // ТВОЙ ПРОДОВЫЙ ТОКЕН
-    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p";
+    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p"; // ПРОДОВЫЙ ТОКЕН
     const apiBase = "https://pgate.bxb.delivery";
 
-    // По документации: amount строго с 2 знаками после запятой и это число/строка (API принимает оба)
     const numericAmount = Number(amount).toFixed(2);
 
+    // ===== ЗДЕСЬ ГЛАВНОЕ ИЗМЕНЕНИЕ =====
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
-      // Строго по документации для type_form: 1 (обычная оплата картой)
       body: JSON.stringify({
         invoiceNumber: String(invoiceNumber).slice(0, 20),
         amount: numericAmount,
         currency: currency || "USD",
-        type_form: 1
+        type_form: 2, // <--- ИЗМЕНИЛИ НА 2 (форма с доставкой)
+        description: "Wiggle House order",
+        email: email || "customer@example.com",
+        customer_id: email || "cust_" + Date.now(),
+        billTo: {
+          firstName: "John",
+          lastName: "Doe",
+          address: "123 Main St",
+          city: "New York",
+          state: "NY",
+          zip: "10001",
+          countryCode: "840"
+        },
+        shipping: {
+          goodsCost: numericAmount, // <--- ДОБАВИЛИ СТОИМОСТЬ ТОВАРА
+          deliveryCost: 0,
+          deliveryService: "BXB"
+        }
       }),
     });
 
     const data = await bxbRes.json();
-
     res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
     return res.status(bxbRes.status).json(data);
 
