@@ -1151,76 +1151,81 @@
     });
   }
 
-  async function payWithBXB(){
-    if (!lastOrderInfo || !BXB_WORKER_ENDPOINT) return;
-    const btn = document.getElementById('bxbPayBtn');
-    const originalText = btn.textContent;
-    btn.textContent = 'Loading payment form…';
-    btn.disabled = true;
+  async function payWithBXB() {
+  if (!lastOrderInfo || !BXB_WORKER_ENDPOINT) return;
+  const btn = document.getElementById('bxbPayBtn');
+  const originalText = btn.textContent;
+  btn.textContent = 'Loading payment form…';
+  btn.disabled = true;
 
-    const amountStr = lastOrderInfo.total.toFixed(2); // BXB requires the exact same 2-decimal string in both steps
-    const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
-    const description = lastOrderInfo.itemsSummary.slice(0, 250);
+  const amountStr = lastOrderInfo.total.toFixed(2);
+  const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
+  const description = lastOrderInfo.itemsSummary.slice(0, 250);
 
-    try {
-      const res = await fetch(BXB_WORKER_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ invoiceNumber, amount: amountStr, currency: 'USD' })
-      });
-      let data;
-      const rawText = await res.text();
-      try { data = JSON.parse(rawText); } catch(parseErr){
-        throw new Error(`DEBUG: worker returned non-JSON (status ${res.status}): ${rawText.slice(0,300)}`);
-      }
-      if (!data.result || !data.token){
-        throw new Error(`DEBUG: worker responded (status ${res.status}) with: ${JSON.stringify(data).slice(0,300)}`);
-      }
-
-      await loadBxbScript();
-      const widgetEl = document.getElementById('bxbpay-widget');
-      widgetEl.style.display = 'block';
-      btn.style.display = 'none';
-
-      const widgetOrder = {
-        invoiceNumber,
-        description,
-        amount: amountStr,
-        currency: 'USD',
-        email: lastOrderInfo.email,
-        customer_id: lastOrderInfo.email,
-        billTo: {
-          firstName: lastOrderInfo.firstName,
-          lastName: lastOrderInfo.lastName,
-          address: lastOrderInfo.address1,
-          city: lastOrderInfo.city,
-          state: lastOrderInfo.state,
-          zip: lastOrderInfo.zip,
-          countryCode: '840' // United States — update if you ever ship elsewhere
-        }
-      };
-
-      window.bxbPayWidget.open({
-        element: '#bxbpay-widget',
-        width: '100%',
-        height: '640px',
-        lang: 'en',
-        payment_token: data.token,
-        order: widgetOrder
-      }, function (response){
-        if (response && response.result_code === 2){
-          widgetEl.innerHTML = `<p style="text-align:center; padding:24px 0; font-family:'Fredoka',sans-serif; font-size:16px;">Payment approved — thank you! 🎉</p>`;
-        } else if (response && response.result_code === 3){
-          alert('The payment was declined. Please try another card, or contact us to arrange another way to pay.');
-        }
-      });
-    } catch (err){
-      btn.style.display = '';
-      btn.textContent = originalText;
-      btn.disabled = false;
-      alert("Couldn't start the payment form.\n\n" + (err && err.message ? err.message : err));
+  try {
+    const res = await fetch(BXB_WORKER_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ invoiceNumber, amount: amountStr, currency: 'USD' })
+    });
+    let data;
+    const rawText = await res.text();
+    try { data = JSON.parse(rawText); } catch(parseErr){
+      throw new Error(`DEBUG: worker returned non-JSON (status ${res.status}): ${rawText.slice(0,300)}`);
     }
+    if (!data.result || !data.token){
+      throw new Error(`DEBUG: worker responded (status ${res.status}) with: ${JSON.stringify(data).slice(0,300)}`);
+    }
+
+    await loadBxbScript();
+    const widgetEl = document.getElementById('bxbpay-widget');
+    widgetEl.style.display = 'block';
+    btn.style.display = 'none';
+
+    // === ИСПРАВЛЕННЫЙ order ===
+    const widgetOrder = {
+      invoiceNumber: invoiceNumber,
+      description: description || "Wiggle House order",
+      amount: amountStr,
+      currency: 'USD',
+      email: lastOrderInfo.email,
+      customer_id: lastOrderInfo.email || "customer_" + Date.now(),
+      billTo: {
+        firstName: lastOrderInfo.firstName || "John",
+        lastName: lastOrderInfo.lastName || "Doe",
+        address: lastOrderInfo.address1 || "123 Main St",
+        city: lastOrderInfo.city || "New York",
+        state: lastOrderInfo.state || "NY",
+        zip: lastOrderInfo.zip || "10001",
+        countryCode: '840' // ← ВАЖНО: число, а не строка
+      }
+    };
+
+    // Логируем, что отправляем
+    console.log('=== Opening BXB widget with order ===');
+    console.log(JSON.stringify(widgetOrder, null, 2));
+
+    window.bxbPayWidget.open({
+      element: '#bxbpay-widget',
+      width: '100%',
+      height: '640px',
+      lang: 'en',
+      payment_token: data.token,
+      order: widgetOrder
+    }, function (response) {
+      if (response && response.result_code === 2) {
+        widgetEl.innerHTML = `<p style="text-align:center; padding:24px 0; font-family:'Fredoka',sans-serif; font-size:16px;">Payment approved — thank you! 🎉</p>`;
+      } else if (response && response.result_code === 3) {
+        alert('The payment was declined. Please try another card, or contact us to arrange another way to pay.');
+      }
+    });
+  } catch (err) {
+    btn.style.display = '';
+    btn.textContent = originalText;
+    btn.disabled = false;
+    alert("Couldn't start the payment form.\n\n" + (err && err.message ? err.message : err));
   }
+}
 
   document.getElementById('orderClose').addEventListener('click', () => orderOverlay.classList.remove('open'));
   orderOverlay.addEventListener('click', (e) => { if (e.target === orderOverlay) orderOverlay.classList.remove('open'); });
