@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wiggle House — Dopamine Decor, 3D-Printed with Love</title>
+<meta name="description" content="Bright, joyful 3D-printed home decor. Tables, shelves, nightstands and more — made to order in any color you want, shipped free across the US.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3EA;
+    --cream-deep:#F4E9DC;
+    --ink:#241F2E;
+    --ink-soft:#6b6376;
+    --pink:#FF6FA0;
+    --violet:#8C7CF0;
+    --yellow:#FFCB4D;
+    --mint:#6FE3C4;
+    --card:#FFFFFF;
+    --line: rgba(36,31,46,0.10);
+    --demo: var(--pink);
+    --radius: 22px;
+    --shadow: 0 10px 30px rgba(36,31,46,0.08);
+    --shadow-lg: 0 24px 60px rgba(36,31,46,0.14);
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--cream);
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .display{
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  .mono{ font-family:'Space Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+  img{max-width:100%; display:block;}
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+  section{ position:relative; }
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--violet);
+    font-weight:700;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px; border-radius:50%;
+    background:var(--violet);
+    display:inline-block;
+  }
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px 26px;
+    border-radius:100px;
+    font-family:'Fredoka', sans-serif;
+    font-weight:600;
+    font-size:16px;
+    border:2px solid var(--ink);
+    cursor:pointer;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, color .18s ease;
+    white-space:nowrap;
+  }
+  .btn-solid{ background:var(--ink); color:var(--cream); }
+  .btn-solid:hover{ transform:translateY(-2px); box-shadow:0 10px 22px rgba(36,31,46,0.28); }
+  .btn-ghost{ background:transparent; color:var(--ink); }
+  .btn-ghost:hover{ background:var(--ink); color:var(--cream); transform:translateY(-2px); }
+  .btn-sm{ padding:10px 18px; font-size:14px; border-width:1.5px; }
+
+  /* ---------- NAV ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(251,243,234,0.82);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 0;
+  }
+  .logo{
+    font-family:'Fredoka', sans-serif;
+    font-weight:700;
+    font-size:24px;
+    letter-spacing:0.01em;
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{ color:var(--pink); }
+  .nav-links{ display:flex; gap:34px; font-weight:600; font-size:15px; }
+  .nav-links a{ opacity:0.75; transition:opacity .15s ease, color .15s ease; }
+  .nav-links a:hover{ opacity:1; color:var(--violet); }
+  .nav-right{ display:flex; align-items:center; gap:16px; }
+  .cart-btn{
+    position:relative;
+    width:42px; height:42px; border-radius:50%;
+    border:2px solid var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    background:var(--card);
+  }
+  .cart-count{
+    position:absolute; top:-6px; right:-6px;
+    background:var(--pink); color:#fff;
+    font-family:'Space Mono', monospace; font-size:11px; font-weight:700;
+    width:19px; height:19px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    border:2px solid var(--cream);
+  }
+  .burger{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{ padding:76px 0 60px; position:relative; overflow:hidden; }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:40px; align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(40px, 5.4vw, 68px);
+    line-height:1.03;
+    margin:18px 0 20px;
+  }
+  .hero h1 .accent{ color:var(--pink); }
+  .hero h1 .accent2{ color:var(--violet); }
+  .hero p.lede{
+    font-size:18px; line-height:1.6; color:var(--ink-soft);
+    max-width:460px; margin-bottom:30px;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:34px; }
+  .trust-row{ display:flex; gap:26px; flex-wrap:wrap; }
+  .trust-item{ display:flex; align-items:center; gap:8px; font-size:13.5px; font-weight:600; color:var(--ink-soft); }
+  .trust-item svg{ flex:0 0 auto; }
+
+  /* hero visual / signature color-dial */
+  .hero-visual{ position:relative; display:flex; flex-direction:column; align-items:center; gap:26px; }
+  .demo-stage{
+    width:100%; max-width:340px; aspect-ratio:1/1;
+    border-radius:32px;
+    background: var(--cream-deep);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: var(--shadow-lg);
+    position:relative;
+    border:1px solid var(--line);
+    overflow:hidden;
+  }
+  .demo-photo{
+    width:100%; height:100%; object-fit:cover; display:block;
+    transition: opacity .25s ease;
+  }
+  .demo-label{
+    font-family:'Space Mono', monospace; font-size:12px; letter-spacing:0.08em; text-transform:uppercase;
+    color:#fff; position:absolute; bottom:16px; left:16px; z-index:2;
+    background:rgba(36,31,46,0.55); padding:6px 12px; border-radius:100px; backdrop-filter:blur(4px);
+  }
+  .color-dial{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:320px; }
+  .swatch{
+    width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid rgba(255,255,255,0.7);
+    box-shadow:0 3px 8px rgba(0,0,0,0.12);
+    transition: transform .15s ease, box-shadow .15s ease;
+    position:relative;
+  }
+  .swatch:hover{ transform:translateY(-3px) scale(1.08); }
+  .swatch.active{ box-shadow:0 0 0 3px var(--cream), 0 0 0 5px var(--ink); }
+  .dial-caption{ font-size:13px; color:var(--ink-soft); font-weight:600; }
+  .dial-caption b{ color:var(--ink); font-family:'Space Mono', monospace; font-weight:700; }
+
+  /* ---------- MARQUEE ---------- */
+  .marquee{
+    border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    background:var(--ink); color:var(--cream);
+    padding:16px 0; overflow:hidden; white-space:nowrap;
+  }
+  .marquee-track{ display:inline-flex; gap:40px; animation: scroll 26s linear infinite; }
+  .marquee-track span{
+    font-family:'Fredoka', sans-serif; font-size:16px; font-weight:600;
+    display:inline-flex; align-items:center; gap:40px; text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .marquee-track span::after{ content:"✦"; color:var(--yellow); }
+  @keyframes scroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---------- SHOP ---------- */
+  .shop{ padding:88px 0 40px; }
+  .section-head{ display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:36px; flex-wrap:wrap; }
+  .section-head h2{ font-size:clamp(30px, 3.6vw, 42px); margin-top:10px; }
+  .section-head p{ color:var(--ink-soft); max-width:420px; font-size:15.5px; }
+
+  .filters{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:34px; }
+  .chip{
+    padding:9px 18px; border-radius:100px; border:1.5px solid var(--line);
+    font-size:13.5px; font-weight:600; cursor:pointer; background:var(--card);
+    transition: all .15s ease;
+  }
+  .chip.active, .chip:hover{ background:var(--ink); color:var(--cream); border-color:var(--ink); }
+
+  .grid{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;
+  }
+  .card{
+    background:var(--card); border-radius:var(--radius); padding:20px 20px 22px;
+    box-shadow:var(--shadow); border:1px solid var(--line);
+    display:flex; flex-direction:column; gap:14px;
+    transition: transform .2s ease, box-shadow .2s ease;
+    cursor:pointer;
+  }
+  .card:hover{ transform:translateY(-5px); box-shadow:var(--shadow-lg); }
+  .card-media{
+    aspect-ratio:1/0.92; border-radius:16px;
+    background:var(--cream-deep);
+    display:flex; align-items:center; justify-content:center;
+    position:relative; overflow:hidden;
+  }
+  .card-media .cblob{
+    position:absolute; inset:0; opacity:0.45;
+    background: radial-gradient(circle at 65% 25%, var(--card-color, var(--pink)), transparent 65%);
+    transition: background .3s ease;
+  }
+  .card-media svg{ width:46%; height:46%; color:var(--card-color, var(--pink)); position:relative; z-index:2; transition:color .3s ease; }
+  .card-media .ph-tag{
+    position:absolute; top:10px; left:10px; z-index:3;
+    font-family:'Space Mono', monospace; font-size:10px; letter-spacing:0.05em;
+    background:rgba(255,255,255,0.85); color:var(--ink-soft);
+    padding:4px 8px; border-radius:100px; text-transform:uppercase;
+  }
+  .badge{
+    position:absolute; top:10px; right:10px; z-index:3;
+    background:var(--pink); color:#fff; font-family:'Space Mono',monospace;
+    font-size:10.5px; font-weight:700; padding:5px 9px; border-radius:100px;
+  }
+  .card h3{ font-size:18px; font-weight:600; }
+  .card .desc{ font-size:13.5px; color:var(--ink-soft); line-height:1.5; min-height:36px; }
+  .price-row{ display:flex; align-items:baseline; gap:8px; }
+  .price{ font-family:'Space Mono', monospace; font-weight:700; font-size:18px; }
+  .price-old{ font-family:'Space Mono', monospace; font-size:13px; color:var(--ink-soft); text-decoration:line-through; }
+  .card-swatches{ display:flex; gap:6px; flex-wrap:wrap; }
+  .card-swatches .sw{
+    width:18px; height:18px; border-radius:50%; cursor:pointer; border:1.5px solid rgba(255,255,255,0.8); box-shadow:0 2px 5px rgba(0,0,0,0.15);
+  }
+  .card-swatches .sw.active{ box-shadow:0 0 0 2px var(--cream), 0 0 0 3.5px var(--ink); }
+
+  /* ---------- real-photo product cards ---------- */
+  .card-media.photo{ aspect-ratio:4/5; background:var(--cream-deep); padding:0; }
+  .card-media.photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumbs{ display:flex; gap:6px; margin-top:2px; }
+  .thumb{
+    width:46px; height:46px; border-radius:9px; overflow:hidden; cursor:pointer;
+    border:2px solid transparent; opacity:0.6; transition: opacity .15s ease, border-color .15s ease; flex:0 0 auto;
+  }
+  .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .thumb:hover{ opacity:0.9; }
+  .thumb.active{ opacity:1; border-color:var(--ink); }
+  .color-info{ font-size:12.5px; color:var(--ink-soft); }
+  .color-info .row{ display:flex; align-items:center; gap:9px; margin-top:6px; flex-wrap:wrap; }
+  .color-info .lbl{ font-weight:600; color:var(--ink); font-size:12px; min-width:78px; }
+  .dots-strip{ display:flex; gap:4px; flex-wrap:wrap; }
+  .dots-strip .d{ width:13px; height:13px; border-radius:50%; border:1px solid rgba(36,31,46,0.12); flex:0 0 auto; }
+  .fixed-tag{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'Space Mono', monospace; font-size:10.5px;
+    background:var(--cream-deep); color:var(--ink-soft);
+    padding:5px 10px; border-radius:100px;
+  }
+  .card-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; gap:10px; }
+  .add-btn{
+    width:42px; height:42px; border-radius:50%; border:2px solid var(--ink); background:var(--card);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition: background .15s ease, color .15s ease, transform .15s ease;
+    flex:0 0 auto;
+  }
+  .add-btn:hover{ background:var(--ink); color:var(--cream); transform:scale(1.06); }
+  .add-btn.added{ background:var(--mint); border-color:var(--mint); color:var(--ink); }
+
+  .shop-more{ text-align:center; margin-top:44px; }
+
+  /* ---------- FEATURES ---------- */
+  .features{ padding:100px 0; }
+  .feat-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+  .feat{
+    background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:28px 22px; box-shadow:var(--shadow);
+  }
+  .feat .fi{
+    width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+  }
+  .feat h3{ font-size:17px; margin-bottom:8px; }
+  .feat p{ font-size:13.5px; color:var(--ink-soft); line-height:1.55; }
+
+  /* ---------- PROCESS ---------- */
+  .process{ padding:20px 0 100px; }
+  .process-inner{
+    background:var(--ink); color:var(--cream); border-radius:32px; padding:56px 44px;
+    display:grid; grid-template-columns:0.8fr 1.2fr; gap:40px; align-items:center;
+  }
+  .process h2{ font-size:clamp(26px,3vw,36px); margin-bottom:14px; }
+  .process p{ color:rgba(251,243,234,0.7); font-size:15px; line-height:1.6; max-width:360px; }
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; }
+  .step{ display:flex; flex-direction:column; gap:10px; }
+  .step .num{ font-family:'Space Mono', monospace; color:var(--yellow); font-size:13px; font-weight:700; }
+  .step h4{ font-family:'Fredoka', sans-serif; font-size:16px; font-weight:600; }
+  .step p{ font-size:12.5px; color:rgba(251,243,234,0.6); max-width:none; }
+
+  /* ---------- TESTIMONIALS ---------- */
+  .testi{ padding:0 0 100px; }
+  .testi-track-wrap{ overflow:hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .testi-track{ display:flex; gap:20px; width:max-content; animation: scroll2 34s linear infinite; }
+  @keyframes scroll2{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+  .testi-card{
+    width:300px; background:var(--card); border:1px solid var(--line); border-radius:18px; padding:22px;
+    box-shadow:var(--shadow); flex:0 0 auto;
+  }
+  .stars{ color:var(--yellow); font-size:14px; margin-bottom:10px; letter-spacing:2px; }
+  .testi-card p{ font-size:14px; line-height:1.55; color:var(--ink); margin-bottom:14px; }
+  .testi-name{ font-size:12.5px; font-weight:700; color:var(--ink-soft); font-family:'Space Mono', monospace; }
+
+  /* ---------- CTA / FORM ---------- */
+  .cta{ padding:0 0 100px; }
+  .cta-inner{
+    background: linear-gradient(135deg, var(--pink), var(--violet));
+    border-radius:32px; padding:60px 48px; color:#fff;
+    display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;
+    position:relative; overflow:hidden;
+  }
+  .cta-inner::before{
+    content:""; position:absolute; width:340px; height:340px; border-radius:50%;
+    background:rgba(255,255,255,0.14); right:-100px; top:-120px;
+  }
+  .cta h2{ font-size:clamp(28px,3.4vw,38px); margin-bottom:14px; }
+  .cta p{ font-size:15px; opacity:0.92; max-width:380px; line-height:1.6; }
+  .form-card{
+    background:#fff; border-radius:20px; padding:26px; color:var(--ink);
+    box-shadow:var(--shadow-lg); position:relative; z-index:2;
+  }
+  .form-card h3{ font-size:16px; margin-bottom:4px; }
+  .form-card .sub{ font-size:13px; color:var(--ink-soft); margin-bottom:18px; }
+  .field{ margin-bottom:12px; }
+  .field input{
+    width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Inter', sans-serif; font-size:14px; background:var(--cream);
+  }
+  .field input:focus{ outline:2px solid var(--violet); outline-offset:1px; }
+  .form-card .btn{ width:100%; margin-top:6px; }
+  .form-note{ font-size:11.5px; color:var(--ink-soft); margin-top:10px; text-align:center; }
+
+  /* ---------- order modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; z-index:300;
+    background:rgba(36,31,46,0.55); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:var(--cream); border-radius:26px; width:100%; max-width:460px;
+    max-height:88vh; overflow-y:auto; padding:28px 26px; position:relative;
+    box-shadow:var(--shadow-lg);
+  }
+  .modal-close{
+    position:absolute; top:16px; right:16px; width:34px; height:34px; border-radius:50%;
+    border:1.5px solid var(--line); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .modal-box h3{ font-size:20px; margin-bottom:4px; padding-right:30px; }
+  .modal-sub{ font-size:13px; color:var(--ink-soft); margin-bottom:18px; }
+  .cart-lines{ margin-bottom:16px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:10px 0; }
+  .cart-line{ display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding:6px 0; }
+  .cart-line .qty-controls{ display:flex; align-items:center; gap:8px; }
+  .cart-line .qty-controls button{
+    width:22px; height:22px; border-radius:50%; border:1.5px solid var(--line); background:var(--card);
+    cursor:pointer; font-family:'Space Mono', monospace; font-size:12px; line-height:1;
+  }
+  .cart-empty{ font-size:13.5px; color:var(--ink-soft); text-align:center; padding:14px 0; }
+  .cart-total{ display:flex; justify-content:space-between; font-family:'Space Mono', monospace; font-weight:700; font-size:15px; margin-bottom:18px; }
+  .modal-box .field input, .modal-box .field textarea{
+    width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line);
+    font-family:'Inter', sans-serif; font-size:14px; background:var(--card); resize:vertical;
+  }
+  .modal-box .field{ margin-bottom:12px; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .modal-box .btn{ width:100%; }
+  .order-success{ text-align:center; padding:20px 6px; }
+  .order-success svg{ color:var(--mint); margin-bottom:10px; }
+  .order-success h3{ padding-right:0; }
+  .buy-now-btn{
+    font-family:'Fredoka', sans-serif; font-weight:600; font-size:13px;
+    color:var(--violet); background:none; border:none; cursor:pointer; text-decoration:underline;
+    text-underline-offset:3px; padding:0;
+  }
+
+  /* ---------- product detail modal ---------- */
+  .modal-box.product-box{ max-width:760px; }
+  .pm-grid{ display:grid; grid-template-columns:1fr 1fr; gap:26px; }
+  .pm-media{
+    aspect-ratio:1/1; border-radius:20px; overflow:hidden; background:var(--cream-deep);
+    position:relative;
+  }
+  .pm-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .pm-media .badge{ position:absolute; top:12px; right:12px; }
+  .pm-thumbs{ display:flex; gap:8px; margin-top:10px; }
+  .pm-info h2{ font-size:24px; margin-bottom:6px; padding-right:26px; }
+  .pm-price{ font-family:'Space Mono', monospace; font-weight:700; font-size:20px; margin-bottom:12px; }
+  .pm-desc{ font-size:14.5px; color:var(--ink-soft); line-height:1.6; margin-bottom:14px; }
+  .pm-actions{ display:flex; gap:10px; margin-top:18px; flex-wrap:wrap; }
+  .pm-actions .btn{ flex:1; min-width:140px; }
+  @media (max-width: 640px){
+    .pm-grid{ grid-template-columns:1fr; }
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:60px 0 34px; border-top:1px solid var(--line); }
+  .foot-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:30px; margin-bottom:44px; }
+  .foot-brand .logo{ margin-bottom:12px; }
+  .foot-brand p{ font-size:13.5px; color:var(--ink-soft); max-width:260px; line-height:1.6; }
+  .foot-col h4{ font-family:'Space Mono', monospace; font-size:12px; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:14px; color:var(--ink-soft); }
+  .foot-col a{ display:block; font-size:14px; margin-bottom:10px; opacity:0.85; transition:opacity .15s; }
+  .foot-col a:hover{ opacity:1; color:var(--violet); }
+  .foot-social{ display:flex; gap:10px; margin-top:6px; }
+  .foot-social a{
+    width:36px; height:36px; border-radius:50%; border:1.5px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .foot-bottom{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:12.5px; color:var(--ink-soft); border-top:1px solid var(--line); padding-top:24px; }
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width: 980px){
+    .hero-grid{ grid-template-columns:1fr; }
+    .hero-visual{ order:-1; }
+    .feat-grid{ grid-template-columns:repeat(2,1fr); }
+    .process-inner{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:repeat(2,1fr); }
+    .grid{ grid-template-columns:repeat(2,1fr); }
+    .cta-inner{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width: 640px){
+    .nav-links{ display:none; }
+    .grid{ grid-template-columns:1fr 1fr; gap:14px; }
+    .feat-grid{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr 1fr; }
+    .foot-grid{ grid-template-columns:1fr; }
+    .cta-inner, .process-inner{ padding:36px 24px; border-radius:24px; }
+    .card h3{ font-size:15px; }
+    .price{ font-size:15px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track, .testi-track{ animation:none; }
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo">Wiggle House<span class="dot">.</span></a>
+    <nav class="nav-links">
+      <a href="#shop">Shop</a>
+      <a href="#why">Why Us</a>
+      <a href="#process">How it's made</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-right">
+      <a href="#contact" class="btn btn-ghost btn-sm">Get in touch</a>
+      <div class="cart-btn" id="cartBtn" aria-label="Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-count" id="cartCount">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">3D-Printed &middot; Made in Small Batches</span>
+        <h1>Decor with a <span class="accent">dopamine</span> hit built in.</h1>
+        <p class="lede">Lamps that glow like candy, bookends worth showing off, shelves in whatever color makes you happiest. Every piece is 3D-printed to order — pick a color, we print it, you fall in love with your room again.</p>
+        <div class="hero-ctas">
+          <a href="#shop" class="btn btn-solid">Shop the collection</a>
+          <a href="#why" class="btn btn-ghost">Why Us</a>
+        </div>
+        <div class="trust-row">
+          <span class="trust-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg> Free US shipping</span>
+          <span class="trust-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg> 15+ colors per item</span>
+          <span class="trust-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 13l4 4L19 7"/></svg> Made to order</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="demo-stage">
+          <img class="demo-photo" id="demoImg" src="assets/img1.jpg" alt="Cloud Lamp">
+          <span class="demo-label" id="demoLabel">Cloud Lamp — Orange</span>
+        </div>
+        <div class="color-dial" id="colorDial"></div>
+        <p class="dial-caption" id="dialCaption">Shown in <b>Orange</b> &amp; <b>Pink</b> &middot; <a href="#shop">see all colors</a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>BRIGHT BY DESIGN <span>BOLD ON PURPOSE</span> <span>PRINTED TO ORDER</span> <span>MADE TO SPARK JOY</span> <span>PICK YOUR PALETTE</span></span>
+      <span>BRIGHT BY DESIGN <span>BOLD ON PURPOSE</span> <span>PRINTED TO ORDER</span> <span>MADE TO SPARK JOY</span> <span>PICK YOUR PALETTE</span></span>
+    </div>
+  </div>
+
+  <!-- SHOP -->
+  <section class="shop" id="shop">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">The Collection</span>
+          <h2>Small pieces, big personality.</h2>
+        </div>
+        <p>Every item ships from our studio, printed in eco-friendly PLA. Order 3+ pieces and take 10% off automatically.</p>
+      </div>
+
+      <div class="filters" id="filters">
+        <button class="chip active" data-filter="all">All</button>
+        <button class="chip" data-filter="lighting">Lighting</button>
+        <button class="chip" data-filter="tables">Tables</button>
+        <button class="chip" data-filter="storage">Storage</button>
+      </div>
+
+      <div class="grid" id="productGrid"></div>
+
+      <div class="shop-more">
+        <a href="#contact" class="btn btn-ghost">Want a custom color? Ask us</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="why">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <span class="eyebrow">Why Wiggle House</span>
+          <h2>Little details, on purpose.</h2>
+        </div>
+      </div>
+      <div class="feat-grid">
+        <div class="feat">
+          <div class="fi" style="background:#FFE3EE;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF6FA0" stroke-width="2.2"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z"/></svg>
+          </div>
+          <h3>Premium PLA, every time</h3>
+          <p>Eco-friendly filament, quality-checked at every print stage — no flimsy plastic ever leaves the studio.</p>
+        </div>
+        <div class="feat">
+          <div class="fi" style="background:#E7E2FF;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#8C7CF0" stroke-width="2.2"><path d="M21 11.5a8.5 8.5 0 0 1-11.8 7.8L3 21l1.7-6.2A8.5 8.5 0 1 1 21 11.5z"/></svg>
+          </div>
+          <h3>A real human replies</h3>
+          <p>We stay in touch from the moment you order until it lands on your doorstep — no chatbots, promise.</p>
+        </div>
+        <div class="feat">
+          <div class="fi" style="background:#FFF3D1;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#E8A93C" stroke-width="2.2"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M8 8V6a4 4 0 0 1 8 0v2"/></svg>
+          </div>
+          <h3>A little gift, always</h3>
+          <p>Every order includes a small surprise — order three pieces, get three surprises.</p>
+        </div>
+        <div class="feat">
+          <div class="fi" style="background:#DEF9EF;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2FBE8F" stroke-width="2.2"><path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7"/><path d="M3 7l9-4 9 4-9 4-9-4z"/><path d="M12 11v9"/></svg>
+          </div>
+          <h3>Gift-ready packaging</h3>
+          <p>Box, ribbon, tissue paper, a handwritten card — every single piece, every single time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="wrap">
+      <div class="process-inner">
+        <div>
+          <span class="eyebrow" style="color:var(--yellow);">How it's made</span>
+          <h2>From file to your front porch.</h2>
+          <p>No warehouses full of pre-made stock. Each piece is printed after you order it — that's how we offer 15+ colors on almost everything.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="num">01</span>
+            <h4>Design</h4>
+            <p>Pinterest-inspired shapes, drawn and modeled in-house.</p>
+          </div>
+          <div class="step">
+            <span class="num">02</span>
+            <h4>Print</h4>
+            <p>Slow, careful 3D printing in your chosen color of PLA.</p>
+          </div>
+          <div class="step">
+            <span class="num">03</span>
+            <h4>Pack</h4>
+            <p>Wrapped by hand with ribbon, tissue, and a little gift.</p>
+          </div>
+          <div class="step">
+            <span class="num">04</span>
+            <h4>Ship</h4>
+            <p>Free shipping, tracked door to door, anywhere in the US.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testi">
+    <div class="wrap section-head">
+      <div>
+        <span class="eyebrow">Happy Homes</span>
+        <h2>What people are saying.</h2>
+      </div>
+    </div>
+    <div class="testi-track-wrap">
+      <div class="testi-track" id="testiTrack"></div>
+    </div>
+  </section>
+
+  <!-- CTA / CONTACT -->
+  <section class="cta" id="contact">
+    <div class="wrap">
+      <div class="cta-inner">
+        <div>
+          <span class="eyebrow" style="color:#fff;">Let's talk color</span>
+          <h2>Get first dibs on new drops.</h2>
+          <p>Join the list for new colorways, restocks, and the occasional discount code. No spam — just bright things.</p>
+        </div>
+        <form class="form-card" id="leadForm">
+          <h3>Say hi 👋</h3>
+          <p class="sub">We'll get back to you within a day.</p>
+          <div class="field"><input type="text" placeholder="Your name" required></div>
+          <div class="field"><input type="email" placeholder="Your email" required></div>
+          <div class="field"><input type="text" placeholder="What are you dreaming up? (optional)"></div>
+          <button type="submit" class="btn btn-solid">Send it</button>
+          <p class="form-note">This form is for demo purposes — connect it to your email or store backend to go live.</p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a href="#top" class="logo">Wiggle House<span class="dot">.</span></a>
+        <p>Dopamine decor, printed to order. Bright rooms, one small object at a time.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg></a>
+          <a href="#" aria-label="Pinterest"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 20c1-3 2-7 2-9a3 3 0 1 1 6 0c0 2-1 5-2 6"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h4>Shop</h4>
+        <a href="#shop">Lighting</a>
+        <a href="#shop">Tables</a>
+        <a href="#shop">Storage</a>
+        <a href="#shop">All products</a>
+      </div>
+      <div class="foot-col">
+        <h4>Studio</h4>
+        <a href="#why">Why Us</a>
+        <a href="#process">How it's made</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h4>Support</h4>
+        <a href="#contact">Shipping &amp; returns</a>
+        <a href="#contact">Custom colors</a>
+        <a href="#contact">FAQ</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>&copy; 2026 Wiggle House. All rights reserved.</span>
+      <span>Made with love &middot; Printed to order &middot; Shipped free across the US</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="orderOverlay">
+  <div class="modal-box" id="orderBox">
+    <div class="modal-close" id="orderClose" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+    <div id="orderContent">
+      <h3>Your order</h3>
+      <p class="modal-sub">Send us your order and shipping address — we'll follow up by email with a secure payment link within a day.</p>
+      <div class="cart-lines" id="cartLines"></div>
+      <div class="cart-total" id="cartTotal"></div>
+      <form id="orderForm">
+        <div class="field-row">
+          <div class="field"><input type="text" name="firstName" placeholder="First name" required></div>
+          <div class="field"><input type="text" name="lastName" placeholder="Last name" required></div>
+        </div>
+        <div class="field"><input type="email" name="email" placeholder="Email" required></div>
+        <div class="field"><input type="text" name="address1" placeholder="Street address" required></div>
+        <div class="field-row">
+          <div class="field"><input type="text" name="city" placeholder="City" required></div>
+          <div class="field"><input type="text" name="state" placeholder="State (2-letter, e.g. NY)" maxlength="2" style="text-transform:uppercase" required></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><input type="text" name="zip" placeholder="ZIP code" required></div>
+          <div class="field"><input type="text" name="country" placeholder="Country" value="United States" readonly></div>
+        </div>
+        <div class="field"><textarea name="notes" rows="2" placeholder="Colors, sizes, or anything else we should know"></textarea></div>
+        <button type="submit" class="btn btn-solid" id="orderSubmitBtn">Send order</button>
+        <p class="form-note">No payment is collected here — this just sends us your order and address. We'll email you a payment link to finish checkout.</p>
+      </form>
+    </div>
+    <div id="bxbpay-widget" style="display:none; margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- PRODUCT DETAIL MODAL -->
+<div class="modal-overlay" id="productOverlay">
+  <div class="modal-box product-box" id="productBox">
+    <div class="modal-close" id="productClose" aria-label="Close">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+    <div id="productContent"></div>
+  </div>
+</div>
+
+<script>
+  // ---------- Color palette (name + hex), used for hero dial + product swatches ----------
+  // Full 15-color PLA palette (matches what's offered on made-to-order pieces)
+  const PALETTE = [
+    { name:"Red", hex:"#E5433B" },
+    { name:"Purple", hex:"#93279F" },
+    { name:"Fuchsia", hex:"#E91E8C" },
+    { name:"Pink", hex:"#FF6FA0" },
+    { name:"Yellow", hex:"#FFC93C" },
+    { name:"Orange", hex:"#FF8A3D" },
+    { name:"Lime", hex:"#A8D93B" },
+    { name:"Khaki", hex:"#B7B36A" },
+    { name:"Violet", hex:"#7C5CFC" },
+    { name:"Sky Blue", hex:"#5BC8E8" },
+    { name:"Blue", hex:"#2F5FE0" },
+    { name:"Beige", hex:"#E8D9C0" },
+    { name:"Brown", hex:"#8B5E3C" },
+    { name:"White", hex:"#F7F5F0" },
+    { name:"Black", hex:"#2A2630" }
+  ];
+  function findColor(name){ return PALETTE.find(c => c.name === name) || {name, hex:"#ccc"}; }
+
+  // ---------- Products (real photos) ----------
+  const PRODUCTS = [
+    { id:1, name:"Cone Table", cat:"tables", price:168,
+      desc:"A cake-stand top, cylinder waist and cone base — doubles as a side table or a pedestal for your favorite plant.",
+      images:["assets/img2.jpg","assets/img3.jpg","assets/img4.jpg","assets/img5.jpg"],
+      colorMode:"fixed", colorNote:"Blush Pink, Marigold &amp; Sky Blue — signature colorway" },
+    { id:2, name:"Bubble Bloom Table", cat:"tables", price:148, badge:"New",
+      desc:"Three stacked ribbed spheres topped with a daisy-shaped surface. Sturdy enough for a lamp, light enough to move around.",
+      images:["assets/img6.jpg"],
+      colorMode:"fixed", colorNote:"Bubblegum Pink &amp; Marigold — signature colorway" },
+    { id:3, name:"Pedestal Table", cat:"tables", price:128,
+      desc:"A rounded, sculptural side table with a wide top and a totem-like base. One solid color, top to bottom.",
+      images:["assets/img7.jpg"],
+      colorMode:"choice", colorChoices:["Red","Pink","Purple","Yellow","Lime"] },
+    { id:4, name:"Wave Shelf", cat:"storage", price:58,
+      desc:"An S-curved wall shelf on two mounting brackets — room for the things you actually reach for every day.",
+      images:["assets/img8.jpg","assets/img9.jpg","assets/img10.jpg","assets/img11.jpg"],
+      colorMode:"parts", parts:[{label:"Shelf", full:true},{label:"Brackets", full:true}] },
+    { id:5, name:"Stack Nightstand — 3 Tier", cat:"storage", price:178,
+      desc:"Three stacked wave-edge cubbies, each deep enough for books, a tablet, or a lamp up top.",
+      images:["assets/img12.jpg","assets/img13.jpg","assets/img14.jpg","assets/img15.jpg"],
+      colorMode:"parts", parts:[{label:"Top", full:true},{label:"Middle", full:true},{label:"Bottom", full:true}] },
+    { id:6, name:"Stack Nightstand — 2 Tier", cat:"storage", price:138,
+      desc:"A compact two-tier version of our stacking nightstand — open cubby storage, same wave-edge detail.",
+      images:["assets/img16.jpg","assets/img17.jpg","assets/img18.jpg","assets/img19.jpg"],
+      colorMode:"parts", parts:[{label:"Top", full:true},{label:"Bottom", full:true}] },
+    { id:7, name:"Cloud Lamp", cat:"lighting", price:54, badge:"New",
+      desc:"A wavy, cloud-shaped shade on slim tripod legs. Soft, warm glow that works on a side table, nightstand, or shelf.",
+      images:["assets/img20.jpg","assets/img21.jpg","assets/img22.jpg"],
+      colorMode:"choice", colorChoices:["Orange","Pink"] },
+    { id:8, name:"Wave Magazine Rack", cat:"storage", price:38, badge:"New",
+      desc:"An S-curved desktop rack that holds magazines and books upright, with room for a stack flat underneath.",
+      images:["assets/img23.jpg","assets/img24.jpg","assets/img25.jpg"],
+      colorMode:"choice", colorChoices:["Sky Blue","Yellow","Red"] }
+  ];
+
+  // ---------- Render hero color dial ----------
+  const dial = document.getElementById('colorDial');
+  const demoImg = document.getElementById('demoImg');
+  const demoLabel = document.getElementById('demoLabel');
+  const dialCaption = document.getElementById('dialCaption');
+  const HERO_PHOTOS = { "Orange": demoImg.src, "Pink": null }; // Pink filled in below to avoid a second huge inline literal
+  PALETTE.forEach((c, i) => {
+    const d = document.createElement('div');
+    d.className = 'swatch' + (c.name === 'Orange' ? ' active' : '');
+    d.style.background = c.hex;
+    d.title = c.name;
+    d.addEventListener('click', () => {
+      dial.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+      d.classList.add('active');
+      if (HERO_PHOTOS[c.name]){
+        demoImg.style.opacity = 0;
+        setTimeout(() => { demoImg.src = HERO_PHOTOS[c.name]; demoImg.style.opacity = 1; }, 120);
+        demoLabel.textContent = `Cloud Lamp — ${c.name}`;
+        dialCaption.innerHTML = `Shown in <b>Orange</b> &amp; <b>Pink</b> &middot; <a href="#shop">see all colors</a>`;
+      } else {
+        demoLabel.textContent = `Cloud Lamp — ${c.name}`;
+        dialCaption.innerHTML = `${c.name} available to order &middot; photo coming soon &middot; <a href="#shop">see product</a>`;
+      }
+    });
+    dial.appendChild(d);
+  });
+  HERO_PHOTOS["Pink"] = "assets/img26.jpg";
+
+  // ---------- Render product grid ----------
+  const grid = document.getElementById('productGrid');
+  const cartCountEl = document.getElementById('cartCount');
+
+  // ===== CONFIG: fill these in to go live =====
+  // 1) Create a form at https://formspree.io (free) and paste its endpoint below.
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdznb";
+  // 2) Optional: paste a payment link per product id here (from CryptoCloud, lava.top,
+  //    Prodamus, or any other provider) once you've created it. Leave empty to skip —
+  //    orders still come through by email either way, you can just invoice manually.
+  const PAYMENT_LINKS = { 1:"", 2:"", 3:"", 4:"", 5:"", 6:"", 7:"", 8:"" };
+  // 3) BXB card widget: deploy /bxb-worker.js as a Cloudflare Worker (see the
+  //    instructions you were given), then paste its URL below. Leave empty to
+  //    hide the "Pay now with card" button and fall back to PAYMENT_LINKS only.
+  const BXB_WORKER_ENDPOINT = "https://wiggle-house-526gt850r-japopa7-6243.vercel.app/api/payment";
+  // Switch to false only once you've fully tested with the TEST token above
+  // and are ready to take real payments with the PROD token.
+  const BXB_TEST_MODE = true;
+  const BXB_WIDGET_JS = BXB_TEST_MODE
+    ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
+    : "https://pgate.bxb.delivery/js/bxbpay-widget.js";
+  // ==============================================
+
+  let CART = []; // { id, name, price, qty }
+  let lastOrderInfo = null; // captured from the order form, used to open the BXB widget
+
+  function cartCount(){ return CART.reduce((n, i) => n + i.qty, 0); }
+  function updateCartBadge(){ cartCountEl.textContent = cartCount(); }
+  function addToCart(product){
+    const existing = CART.find(i => i.id === product.id);
+    if (existing) existing.qty += 1;
+    else CART.push({ id: product.id, name: product.name, price: product.price, qty: 1 });
+    updateCartBadge();
+  }
+
+  function buildColorInfo(p){
+    if (p.colorMode === 'fixed'){
+      return `<div class="color-info"><span class="fixed-tag">&#10022; ${p.colorNote}</span></div>`;
+    }
+    if (p.colorMode === 'choice'){
+      const dots = p.colorChoices.map(name => {
+        const c = findColor(name);
+        return `<span class="d" style="background:${c.hex}" title="${c.name}"></span>`;
+      }).join('');
+      return `<div class="color-info"><div class="row"><span class="lbl">Pick a color</span><div class="dots-strip">${dots}</div></div></div>`;
+    }
+    if (p.colorMode === 'parts'){
+      const rows = p.parts.map(part => {
+        const dots = PALETTE.map(c => `<span class="d" style="background:${c.hex}" title="${c.name}"></span>`).join('');
+        return `<div class="row"><span class="lbl">${part.label}</span><div class="dots-strip">${dots}</div></div>`;
+      }).join('');
+      return `<div class="color-info">${rows}</div>`;
+    }
+    return '';
+  }
+
+  function renderProducts(filter){
+    grid.innerHTML = '';
+    PRODUCTS.filter(p => filter === 'all' || p.cat === filter).forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-media photo">
+          ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+          <img src="${p.images[0]}" alt="${p.name}">
+        </div>
+        ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((img, i) => `<div class="thumb${i===0?' active':''}" data-src="${img}"><img src="${img}" alt=""></div>`).join('')}</div>` : ''}
+        <h3>${p.name}</h3>
+        <p class="desc">${p.desc}</p>
+        ${buildColorInfo(p)}
+        <div class="card-foot">
+          <div class="price-row">
+            <span class="price">$${p.price}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:14px;">
+            <button type="button" class="buy-now-btn" data-id="${p.id}">Buy now</button>
+            <div class="add-btn" aria-label="Add to cart">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // thumbnail gallery swap
+      const mainImg = card.querySelector('.card-media img');
+      card.querySelectorAll('.thumb').forEach(t => {
+        t.addEventListener('click', (e) => {
+          e.stopPropagation();
+          mainImg.src = t.dataset.src;
+          card.querySelectorAll('.thumb').forEach(o => o.classList.remove('active'));
+          t.classList.add('active');
+        });
+      });
+
+      // add to cart
+      const addBtn = card.querySelector('.add-btn');
+      addBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        addToCart(p);
+        addBtn.classList.add('added');
+        addBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>`;
+        setTimeout(() => {
+          addBtn.classList.remove('added');
+          addBtn.innerHTML = `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>`;
+        }, 900);
+      });
+
+      // buy now: add this item then jump straight to the order modal
+      card.querySelector('.buy-now-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        addToCart(p);
+        openOrderModal();
+      });
+
+      // click anywhere else on the card opens the full product view
+      card.addEventListener('click', () => openProductModal(p));
+
+      grid.appendChild(card);
+    });
+  }
+  renderProducts('all');
+
+  // filters
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderProducts(chip.dataset.filter);
+    });
+  });
+
+  // ---------- Testimonials ----------
+  const TESTIMONIALS = [
+    { name:"J. MARTINEZ — AUSTIN, TX", text:"The Cone Table is the first thing people ask about when they walk into my living room. Packaging alone felt like a gift." },
+    { name:"S. OKAFOR — BROOKLYN, NY", text:"Ordered the Pedestal Table in red — genuinely did not expect a 3D-printed piece to feel this premium." },
+    { name:"R. CHEN — PORTLAND, OR", text:"Customer support answered every question I had before I even ordered. Shipping was fast and free, exactly as promised." },
+    { name:"A. THOMPSON — DENVER, CO", text:"Mixed and matched colors on the Wave Shelf for our kitchen corner — it's exactly the mismatched-on-purpose look I wanted." },
+    { name:"L. NGUYEN — MIAMI, FL", text:"The 3-Tier Nightstand looks like it belongs in a design magazine, not something that came out of a 3D printer." },
+    { name:"D. FOSTER — CHICAGO, IL", text:"Ordered three pieces for the 10% discount — every single one was wrapped like a birthday present." }
+  ];
+  const track = document.getElementById('testiTrack');
+  function starRow(){ return '★★★★★'; }
+  function buildTestiCard(t){
+    const el = document.createElement('div');
+    el.className = 'testi-card';
+    el.innerHTML = `<div class="stars">${starRow()}</div><p>"${t.text}"</p><div class="testi-name">${t.name}</div>`;
+    return el;
+  }
+  [...TESTIMONIALS, ...TESTIMONIALS].forEach(t => track.appendChild(buildTestiCard(t)));
+
+  // ---------- Lead form (demo only) ----------
+  document.getElementById('leadForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const btn = this.querySelector('button');
+    const original = btn.textContent;
+    btn.textContent = 'Thanks — you\'re on the list!';
+    setTimeout(() => { btn.textContent = original; this.reset(); }, 2200);
+  });
+
+  // ---------- Order modal ----------
+  const orderOverlay = document.getElementById('orderOverlay');
+  const orderContent = document.getElementById('orderContent');
+
+  function openOrderModal(){
+    // reset to the order form view every time it's opened
+    orderContent.innerHTML = `
+      <h3>Your order</h3>
+      <p class="modal-sub">Send us your order and shipping address — we'll follow up by email with a secure payment link within a day.</p>
+      <div class="cart-lines" id="cartLines"></div>
+      <div class="cart-total" id="cartTotal"></div>
+      <form id="orderForm">
+        <div class="field-row">
+          <div class="field"><input type="text" name="firstName" placeholder="First name" required></div>
+          <div class="field"><input type="text" name="lastName" placeholder="Last name" required></div>
+        </div>
+        <div class="field"><input type="email" name="email" placeholder="Email" required></div>
+        <div class="field"><input type="text" name="address1" placeholder="Street address" required></div>
+        <div class="field-row">
+          <div class="field"><input type="text" name="city" placeholder="City" required></div>
+          <div class="field"><input type="text" name="state" placeholder="State (2-letter, e.g. NY)" maxlength="2" style="text-transform:uppercase" required></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><input type="text" name="zip" placeholder="ZIP code" required></div>
+          <div class="field"><input type="text" name="country" placeholder="Country" value="United States" readonly></div>
+        </div>
+        <div class="field"><textarea name="notes" rows="2" placeholder="Colors, sizes, or anything else we should know"></textarea></div>
+        <button type="submit" class="btn btn-solid" id="orderSubmitBtn">Send order</button>
+        <p class="form-note">No payment is collected here — this just sends us your order and address. We'll email you a payment link to finish checkout.</p>
+      </form>
+    `;
+    // re-grab references since we just rebuilt this markup
+    wireOrderForm();
+    renderCart2();
+    orderOverlay.classList.add('open');
+  }
+
+  // renderCart() above references elements captured once at load; since openOrderModal
+  // rebuilds the inner HTML, re-query them each time via this wrapper.
+  function renderCart2(){
+    const linesEl = document.getElementById('cartLines');
+    const totalEl = document.getElementById('cartTotal');
+    if (CART.length === 0){
+      linesEl.innerHTML = `<div class="cart-empty">Your cart is empty — add something from the shop first.</div>`;
+      totalEl.textContent = '';
+      const btn = document.getElementById('orderSubmitBtn');
+      if (btn) btn.disabled = true;
+      return;
+    }
+    const btn = document.getElementById('orderSubmitBtn');
+    if (btn) btn.disabled = false;
+    linesEl.innerHTML = CART.map(item => `
+      <div class="cart-line" data-id="${item.id}">
+        <span>${item.name}</span>
+        <div class="qty-controls">
+          <button type="button" class="qty-minus">–</button>
+          <span>${item.qty}</span>
+          <button type="button" class="qty-plus">+</button>
+          <span class="mono">$${item.price * item.qty}</span>
+        </div>
+      </div>
+    `).join('');
+    const total = CART.reduce((sum, i) => sum + i.price * i.qty, 0);
+    totalEl.innerHTML = `<span>Total</span><span>$${total}</span>`;
+
+    linesEl.querySelectorAll('.cart-line').forEach(line => {
+      const id = Number(line.dataset.id);
+      line.querySelector('.qty-plus').addEventListener('click', () => {
+        CART.find(i => i.id === id).qty += 1;
+        updateCartBadge(); renderCart2();
+      });
+      line.querySelector('.qty-minus').addEventListener('click', () => {
+        const item = CART.find(i => i.id === id);
+        item.qty -= 1;
+        if (item.qty <= 0) CART = CART.filter(i => i.id !== id);
+        updateCartBadge(); renderCart2();
+      });
+    });
+  }
+
+  function wireOrderForm(){
+    const form = document.getElementById('orderForm');
+    if (!form) return;
+    form.addEventListener('submit', async function(e){
+      e.preventDefault();
+      if (CART.length === 0) return;
+      const btn = document.getElementById('orderSubmitBtn');
+      const originalText = btn.textContent;
+      btn.textContent = 'Sending…';
+      btn.disabled = true;
+
+      const fd = new FormData(form);
+      const orderSummary = CART.map(i => `${i.name} x${i.qty} ($${i.price * i.qty})`).join(', ');
+      const total = CART.reduce((sum, i) => sum + i.price * i.qty, 0);
+      fd.append('order_summary', orderSummary);
+      fd.append('order_total', `$${total}`);
+
+      // keep everything the BXB widget will need, before the cart gets cleared
+      lastOrderInfo = {
+        firstName: fd.get('firstName') || '',
+        lastName: fd.get('lastName') || '',
+        email: fd.get('email') || '',
+        address1: fd.get('address1') || '',
+        city: fd.get('city') || '',
+        state: (fd.get('state') || '').toUpperCase(),
+        zip: fd.get('zip') || '',
+        total,
+        itemsSummary: orderSummary
+      };
+
+      try {
+        const res = await fetch(FORMSPREE_ENDPOINT, {
+          method: 'POST',
+          body: fd,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok){
+          showOrderSuccess();
+        } else {
+          btn.textContent = originalText;
+          btn.disabled = false;
+          alert("Something went wrong sending your order — please email us directly instead.");
+        }
+      } catch (err){
+        btn.textContent = originalText;
+        btn.disabled = false;
+        alert("Couldn't reach the order form — please check your connection, or email us directly.");
+      }
+    });
+  }
+
+  function showOrderSuccess(){
+    const payLinks = CART
+      .filter(i => PAYMENT_LINKS[i.id])
+      .map(i => `<a href="${PAYMENT_LINKS[i.id]}" target="_blank" rel="noopener" class="btn btn-solid" style="margin-top:8px;">Pay for ${i.name} now</a>`)
+      .join('');
+    const bxbButton = BXB_WORKER_ENDPOINT
+      ? `<button type="button" class="btn btn-solid" id="bxbPayBtn" style="margin-top:10px;">Pay now with card</button>`
+      : '';
+    orderContent.innerHTML = `
+      <div class="order-success">
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
+        <h3>Order sent!</h3>
+        <p class="modal-sub">Thanks — we've got your order and address. We'll email you a payment link within a day to finish checkout.</p>
+        ${bxbButton}
+        ${payLinks}
+      </div>
+    `;
+    if (BXB_WORKER_ENDPOINT){
+      document.getElementById('bxbPayBtn').addEventListener('click', payWithBXB);
+    }
+    CART = [];
+    updateCartBadge();
+  }
+
+  // ---------- BXB card widget ----------
+  function loadBxbScript(){
+    return new Promise((resolve, reject) => {
+      if (window.bxbPayWidget) return resolve();
+      const s = document.createElement('script');
+      s.src = BXB_WIDGET_JS;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error('Could not load the payment widget script'));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function payWithBXB(){
+    if (!lastOrderInfo || !BXB_WORKER_ENDPOINT) return;
+    const btn = document.getElementById('bxbPayBtn');
+    const originalText = btn.textContent;
+    btn.textContent = 'Loading payment form…';
+    btn.disabled = true;
+
+    const amountStr = lastOrderInfo.total.toFixed(2); // BXB requires the exact same 2-decimal string in both steps
+    const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
+    const description = lastOrderInfo.itemsSummary.slice(0, 250);
+
+    try {
+      const res = await fetch(BXB_WORKER_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceNumber, amount: amountStr, currency: 'USD' })
+      });
+      let data;
+      const rawText = await res.text();
+      try { data = JSON.parse(rawText); } catch(parseErr){
+        throw new Error(`DEBUG: worker returned non-JSON (status ${res.status}): ${rawText.slice(0,300)}`);
+      }
+      if (!data.result || !data.token){
+        throw new Error(`DEBUG: worker responded (status ${res.status}) with: ${JSON.stringify(data).slice(0,300)}`);
+      }
+
+      await loadBxbScript();
+      const widgetEl = document.getElementById('bxbpay-widget');
+      widgetEl.style.display = 'block';
+      btn.style.display = 'none';
+
+      const widgetOrder = {
+        invoiceNumber,
+        description,
+        amount: amountStr,
+        currency: 'USD',
+        email: lastOrderInfo.email,
+        customer_id: lastOrderInfo.email,
+        billTo: {
+          firstName: lastOrderInfo.firstName,
+          lastName: lastOrderInfo.lastName,
+          address: lastOrderInfo.address1,
+          city: lastOrderInfo.city,
+          state: lastOrderInfo.state,
+          zip: lastOrderInfo.zip,
+          countryCode: '840' // United States — update if you ever ship elsewhere
+        }
+      };
+
+      window.bxbPayWidget.open({
+        element: '#bxbpay-widget',
+        width: '100%',
+        height: '640px',
+        lang: 'en',
+        payment_token: data.token,
+        order: widgetOrder
+      }, function (response){
+        if (response && response.result_code === 2){
+          widgetEl.innerHTML = `<p style="text-align:center; padding:24px 0; font-family:'Fredoka',sans-serif; font-size:16px;">Payment approved — thank you! 🎉</p>`;
+        } else if (response && response.result_code === 3){
+          alert('The payment was declined. Please try another card, or contact us to arrange another way to pay.');
+        }
+      });
+    } catch (err){
+      btn.style.display = '';
+      btn.textContent = originalText;
+      btn.disabled = false;
+      alert("Couldn't start the payment form.\n\n" + (err && err.message ? err.message : err));
+    }
+  }
+
+  document.getElementById('orderClose').addEventListener('click', () => orderOverlay.classList.remove('open'));
+  orderOverlay.addEventListener('click', (e) => { if (e.target === orderOverlay) orderOverlay.classList.remove('open'); });
+  document.getElementById('cartBtn').addEventListener('click', openOrderModal);
+
+  // ---------- Product detail modal ----------
+  const productOverlay = document.getElementById('productOverlay');
+  const productContent = document.getElementById('productContent');
+
+  function openProductModal(p){
+    productContent.innerHTML = `
+      <div class="pm-grid">
+        <div>
+          <div class="pm-media">
+            ${p.badge ? `<span class="badge">${p.badge}</span>` : ''}
+            <img id="pmMainImg" src="${p.images[0]}" alt="${p.name}">
+          </div>
+          ${p.images.length > 1 ? `<div class="pm-thumbs thumbs">${p.images.map((img, i) => `<div class="thumb${i===0?' active':''}" data-src="${img}"><img src="${img}" alt=""></div>`).join('')}</div>` : ''}
+        </div>
+        <div class="pm-info">
+          <h2>${p.name}</h2>
+          <div class="pm-price">$${p.price}</div>
+          <p class="pm-desc">${p.desc}</p>
+          ${buildColorInfo(p)}
+          <div class="pm-actions">
+            <button type="button" class="btn btn-ghost" id="pmAddBtn">Add to cart</button>
+            <button type="button" class="btn btn-solid" id="pmBuyBtn">Buy now</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const pmMainImg = document.getElementById('pmMainImg');
+    productContent.querySelectorAll('.pm-thumbs .thumb').forEach(t => {
+      t.addEventListener('click', () => {
+        pmMainImg.src = t.dataset.src;
+        productContent.querySelectorAll('.pm-thumbs .thumb').forEach(o => o.classList.remove('active'));
+        t.classList.add('active');
+      });
+    });
+
+    document.getElementById('pmAddBtn').addEventListener('click', () => {
+      addToCart(p);
+      const btn = document.getElementById('pmAddBtn');
+      const original = btn.textContent;
+      btn.textContent = 'Added ✓';
+      setTimeout(() => { btn.textContent = original; }, 1000);
+    });
+
+    document.getElementById('pmBuyBtn').addEventListener('click', () => {
+      addToCart(p);
+      productOverlay.classList.remove('open');
+      openOrderModal();
+    });
+
+    productOverlay.classList.add('open');
+  }
+
+  document.getElementById('productClose').addEventListener('click', () => productOverlay.classList.remove('open'));
+  productOverlay.addEventListener('click', (e) => { if (e.target === productOverlay) productOverlay.classList.remove('open'); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape'){
+      orderOverlay.classList.remove('open');
+      productOverlay.classList.remove('open');
+    }
+  });
+</script>
+
+</body>
+</html>

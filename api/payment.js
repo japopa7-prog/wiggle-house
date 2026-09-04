@@ -1,0 +1,76 @@
+// api/payment.js
+export default async function handler(req, res) {
+  // CORS настройки
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "https://japopa7-prog.github.io",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
+  // Обработка preflight запроса (OPTIONS)
+  if (req.method === "OPTIONS") {
+    res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+    res.setHeader("Access-Control-Allow-Methods", corsHeaders["Access-Control-Allow-Methods"]);
+    res.setHeader("Access-Control-Allow-Headers", corsHeaders["Access-Control-Allow-Headers"]);
+    return res.status(200).end();
+  }
+
+  // Разрешаем только POST
+  if (req.method !== "POST") {
+    res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+    return res.status(405).json({ result: false, error: "Method not allowed" });
+  }
+
+  try {
+    const { invoiceNumber, amount, currency } = req.body;
+
+    if (!invoiceNumber || !amount || !currency) {
+      res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+      return res.status(400).json({
+        result: false,
+        error: "Missing invoiceNumber, amount, or currency"
+      });
+    }
+
+    // Переменные окружения в Vercel
+    const isTest = process.env.BXB_MODE !== "production";
+    const apiBase = isTest ? "https://pgate-dev.bxb.delivery" : "https://pgate.bxb.delivery";
+    const token = isTest ? process.env.BXB_TEST_TOKEN : process.env.BXB_PROD_TOKEN;
+
+    if (!token) {
+      res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+      return res.status(500).json({
+        result: false,
+        error: "BXB token not configured in Vercel environment"
+      });
+    }
+
+    // Запрос к BXB
+    const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        invoiceNumber: String(invoiceNumber).slice(0, 20),
+        amount: Number(amount).toFixed(2),
+        currency,
+        type_form: 1,
+      }),
+    });
+
+    const data = await bxbRes.json();
+
+    // Отправляем ответ с CORS
+    res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+    return res.status(bxbRes.status).json(data);
+
+  } catch (err) {
+    res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
+    return res.status(500).json({
+      result: false,
+      error: String(err)
+    });
+  }
+}
