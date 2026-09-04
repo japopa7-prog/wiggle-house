@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     }
 
     // Переменные окружения в Vercel
-    const token = "bxb_test_ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2"; // ← ваш токен сюда
+    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2"; // ← ваш токен сюда
     const isTest = true;
     const apiBase = "https://pgate-dev.bxb.delivery";
 
