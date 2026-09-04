@@ -33,9 +33,9 @@ export default async function handler(req, res) {
     }
 
     // Переменные окружения в Vercel
-    const isTest = process.env.BXB_MODE !== "production";
-    const apiBase = isTest ? "https://pgate-dev.bxb.delivery" : "https://pgate.bxb.delivery";
-    const token = isTest ? process.env.BXB_TEST_TOKEN : process.env.BXB_PROD_TOKEN;
+    const token = "bxb_test_ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2"; // ← ваш токен сюда
+    const isTest = true;
+    const apiBase = "https://pgate-dev.bxb.delivery";
 
     if (!token) {
       res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
