@@ -1158,13 +1158,13 @@
     btn.textContent = 'Loading payment form…';
     btn.disabled = true;
 
-    // ФОРМИРУЕМ ДАННЫЕ ОДИНАКОВО ДЛЯ ВСЕХ ЗАПРОСОВ
+    // 1. ФОРМИРУЕМ ДАННЫЕ (ЧИСЛО И СТРОКА)
     const amountStr = lastOrderInfo.total.toFixed(2);
-    const amountNum = Number(amountStr);
+    const amountNum = parseFloat(amountStr);
     const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
 
     try {
-      // 1. ПОЛУЧАЕМ payment_token
+      // 2. ПОЛУЧАЕМ payment_token (передаём ЧИСЛО)
       const res = await fetch(BXB_WORKER_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -1184,17 +1184,17 @@
         throw new Error(`Worker error: ${JSON.stringify(data).slice(0,300)}`);
       }
 
-      // 2. ЗАГРУЖАЕМ СКРИПТ ВИДЖЕТА
+      // 3. ЗАГРУЖАЕМ СКРИПТ ВИДЖЕТА
       await loadBxbScript();
       const widgetEl = document.getElementById('bxbpay-widget');
       widgetEl.style.display = 'block';
       btn.style.display = 'none';
 
-      // 3. ОТКРЫВАЕМ ВИДЖЕТ (все данные совпадают с запросом)
+      // 4. ОТКРЫВАЕМ ВИДЖЕТ (ВСЕ ДАННЫЕ СОВПАДАЮТ)
       const widgetOrder = {
         invoiceNumber: invoiceNumber,
         description: lastOrderInfo.itemsSummary.slice(0, 250) || "Wiggle House order",
-        amount: amountStr,
+        amount: amountNum,
         currency: 'USD',
         email: lastOrderInfo.email || "customer@example.com",
         customer_id: lastOrderInfo.email || "customer_" + Date.now(),
