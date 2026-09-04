@@ -741,7 +741,6 @@
 
 <script>
   // ---------- Color palette (name + hex), used for hero dial + product swatches ----------
-  // Full 15-color PLA palette (matches what's offered on made-to-order pieces)
   const PALETTE = [
     { name:"Red", hex:"#E5433B" },
     { name:"Purple", hex:"#93279F" },
@@ -829,27 +828,15 @@
   const grid = document.getElementById('productGrid');
   const cartCountEl = document.getElementById('cartCount');
 
-  // ===== CONFIG: fill these in to go live =====
-  // 1) Create a form at https://formspree.io (free) and paste its endpoint below.
-  const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdznb";
-  // 2) Optional: paste a payment link per product id here (from CryptoCloud, lava.top,
-  //    Prodamus, or any other provider) once you've created it. Leave empty to skip —
-  //    orders still come through by email either way, you can just invoice manually.
-  const PAYMENT_LINKS = { 1:"", 2:"", 3:"", 4:"", 5:"", 6:"", 7:"", 8:"" };
-  // 3) BXB card widget: deploy /bxb-worker.js as a Cloudflare Worker (see the
-  //    instructions you were given), then paste its URL below. Leave empty to
-  //    hide the "Pay now with card" button and fall back to PAYMENT_LINKS only.
+  // ===== КОНФИГУРАЦИЯ BXB =====
+  // URL для получения payment token (Твой воркер на Vercel)
   const BXB_WORKER_ENDPOINT = "https://wiggle-house.vercel.app/api/payment";
-  // Switch to false only once you've fully tested with the TEST token above
-  // and are ready to take real payments with the PROD token.
-  const BXB_TEST_MODE = false;
-  const BXB_WIDGET_JS = BXB_TEST_MODE
-    ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
-    : "https://pgate.bxb.delivery/js/bxbpay-widget.js";
+  // ПРОДОВЫЙ JS виджета, строго по документации
+  const BXB_WIDGET_JS = "https://pgate.bxb.delivery/js/bxbpay-widget.js";
   // ==============================================
 
   let CART = []; // { id, name, price, qty }
-  let lastOrderInfo = null; // captured from the order form, used to open the BXB widget
+  let lastOrderInfo = null;
 
   function cartCount(){ return CART.reduce((n, i) => n + i.qty, 0); }
   function updateCartBadge(){ cartCountEl.textContent = cartCount(); }
@@ -989,7 +976,6 @@
   const orderContent = document.getElementById('orderContent');
 
   function openOrderModal(){
-    // reset to the order form view every time it's opened
     orderContent.innerHTML = `
       <h3>Your order</h3>
       <p class="modal-sub">Send us your order and shipping address — we'll follow up by email with a secure payment link within a day.</p>
@@ -1015,14 +1001,11 @@
         <p class="form-note">No payment is collected here — this just sends us your order and address. We'll email you a payment link to finish checkout.</p>
       </form>
     `;
-    // re-grab references since we just rebuilt this markup
     wireOrderForm();
     renderCart2();
     orderOverlay.classList.add('open');
   }
 
-  // renderCart() above references elements captured once at load; since openOrderModal
-  // rebuilds the inner HTML, re-query them each time via this wrapper.
   function renderCart2(){
     const linesEl = document.getElementById('cartLines');
     const totalEl = document.getElementById('cartTotal');
@@ -1081,7 +1064,7 @@
       fd.append('order_summary', orderSummary);
       fd.append('order_total', `$${total}`);
 
-      // keep everything the BXB widget will need, before the cart gets cleared
+      // Сохраняем данные для BXB
       lastOrderInfo = {
         firstName: fd.get('firstName') || '',
         lastName: fd.get('lastName') || '',
@@ -1095,7 +1078,7 @@
       };
 
       try {
-        const res = await fetch(FORMSPREE_ENDPOINT, {
+        const res = await fetch("https://formspree.io/f/xqpzdznb", {
           method: 'POST',
           body: fd,
           headers: { 'Accept': 'application/json' }
@@ -1116,10 +1099,6 @@
   }
 
   function showOrderSuccess(){
-    const payLinks = CART
-      .filter(i => PAYMENT_LINKS[i.id])
-      .map(i => `<a href="${PAYMENT_LINKS[i.id]}" target="_blank" rel="noopener" class="btn btn-solid" style="margin-top:8px;">Pay for ${i.name} now</a>`)
-      .join('');
     const bxbButton = BXB_WORKER_ENDPOINT
       ? `<button type="button" class="btn btn-solid" id="bxbPayBtn" style="margin-top:10px;">Pay now with card</button>`
       : '';
@@ -1129,7 +1108,6 @@
         <h3>Order sent!</h3>
         <p class="modal-sub">Thanks — we've got your order and address. We'll email you a payment link within a day to finish checkout.</p>
         ${bxbButton}
-        ${payLinks}
       </div>
     `;
     if (BXB_WORKER_ENDPOINT){
@@ -1139,12 +1117,12 @@
     updateCartBadge();
   }
 
-  // ---------- BXB card widget ----------
+  // ---------- BXB card widget (Строго по документации) ----------
   function loadBxbScript(){
     return new Promise((resolve, reject) => {
       if (window.bxbPayWidget) return resolve();
       const s = document.createElement('script');
-      s.src = BXB_WIDGET_JS;
+      s.src = BXB_WIDGET_JS; // https://pgate.bxb.delivery/js/bxbpay-widget.js
       s.onload = resolve;
       s.onerror = () => reject(new Error('Could not load the payment widget script'));
       document.head.appendChild(s);
@@ -1158,20 +1136,23 @@
     btn.textContent = 'Loading payment form…';
     btn.disabled = true;
 
-    // 1. ФОРМИРУЕМ ДАННЫЕ (ЧИСЛО И СТРОКА)
-    const amountStr = lastOrderInfo.total.toFixed(2);
-    const amountNum = parseFloat(amountStr);
+    // Сумма строго с 2 знаками после запятой
+    const amount = Number(lastOrderInfo.total).toFixed(2);
+    const currency = 'USD';
+    
+    // Генерируем ОДИН номер счета для API и для Открытия Виджета (критично по докам!)
     const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
 
     try {
-      // 2. ПОЛУЧАЕМ payment_token (передаём ЧИСЛО)
+      // 1. Получаем payment_token
       const res = await fetch(BXB_WORKER_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           invoiceNumber: invoiceNumber,
-          amount: amountNum,
-          currency: 'USD'
+          amount: amount,
+          currency: currency,
+          email: lastOrderInfo.email
         })
       });
 
@@ -1184,18 +1165,19 @@
         throw new Error(`Worker error: ${JSON.stringify(data).slice(0,300)}`);
       }
 
-      // 3. ЗАГРУЖАЕМ СКРИПТ ВИДЖЕТА
+      // 2. Подключаем скрипт виджета (по документации)
       await loadBxbScript();
       const widgetEl = document.getElementById('bxbpay-widget');
       widgetEl.style.display = 'block';
       btn.style.display = 'none';
 
-      // 4. ОТКРЫВАЕМ ВИДЖЕТ (ВСЕ ДАННЫЕ СОВПАДАЮТ)
+      // 3. Открываем виджет (По документации BXB)
+      // ВАЖНО: invoiceNumber, amount и currency должны ТОЧНО совпадать с теми, что были в API запросе!
       const widgetOrder = {
         invoiceNumber: invoiceNumber,
         description: lastOrderInfo.itemsSummary.slice(0, 250) || "Wiggle House order",
-        amount: amountNum,
-        currency: 'USD',
+        amount: amount,
+        currency: currency,
         email: lastOrderInfo.email || "customer@example.com",
         customer_id: lastOrderInfo.email || "customer_" + Date.now(),
         billTo: {
@@ -1207,19 +1189,18 @@
           zip: lastOrderInfo.zip || "10001",
           countryCode: 840
         },
-        // ===== ДОБАВЛЯЕМ ОБЪЕКТ shipping =====
         shipping: {
-          goodsCost: amountNum,
+          goodsCost: amount,
           deliveryCost: 0,
           deliveryService: 'BXB'
         }
-        // ===================================
       };
 
       console.log('=== Opening BXB widget ===');
       console.log('Token:', data.token);
       console.log('Order:', JSON.stringify(widgetOrder, null, 2));
 
+      // Вызов по докам из твоих скриншотов
       window.bxbPayWidget.open({
         element: '#bxbpay-widget',
         width: '100%',
@@ -1228,6 +1209,7 @@
         payment_token: data.token,
         order: widgetOrder
       }, function (response) {
+        console.log('BXB Response:', response);
         if (response && response.result_code === 2) {
           widgetEl.innerHTML = `<p style="text-align:center; padding:24px 0; font-family:'Fredoka',sans-serif; font-size:16px;">Payment approved — thank you! 🎉</p>`;
         } else if (response && response.result_code === 3) {
