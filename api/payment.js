@@ -29,11 +29,11 @@ export default async function handler(req, res) {
       });
     }
 
-    // ПРАВИЛЬНЫЙ ТОКЕН ИЗ ВАШЕГО ЛИЧНОГО КАБИНЕТА
+    // ТОКЕН ИЗ ДОКУМЕНТАЦИИ (ОБЯЗАТЕЛЬНО ЗАМЕНИТЬ НА СВОЙ)
     const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
-    // 1. Получаем payment_token
+    // ТОЧНО КАК В ДОКУМЕНТАЦИИ (IMG_6496.jpeg)
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -41,12 +41,10 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${token}`,
       },
       body: JSON.stringify({
-        // Поля для создания payment_token (из документации)
-        invoiceNumber: String(invoiceNumber).slice(0, 20),
-        amount: Number(Number(amount).toFixed(2)),
-        currency: currency || "USD",
-        type_form: 1, // <--- ИСПРАВЛЕНО: было type_font
-        // Эти поля нужны для создания корректного платежа (из документации)
+        invoiceNumber: String(invoiceNumber).slice(0, 20), // "inv-9381-1"
+        amount: Number(Number(amount).toFixed(2)),        // 86.4
+        currency: currency || "USD",                      // "USD"
+        type_form: 1,                                     // <--- ОБЯЗАТЕЛЬНО!
         description: "Wiggle House order",
         email: "customer@example.com",
         customer_id: "cust_" + Date.now(),
