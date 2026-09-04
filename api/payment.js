@@ -29,8 +29,8 @@ export default async function handler(req, res) {
       });
     }
 
-    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
-    const apiBase = "https://pgate-dev.bxb.delivery";
+    const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p";
+    const apiBase = "https://pgate.bxb.delivery";
 
     // ===== ГЛАВНОЕ ИЗМЕНЕНИЕ: amount как ЧИСЛО, а не строка =====
     const numericAmount = typeof amount === 'string' ? parseFloat(amount) : Number(amount);
