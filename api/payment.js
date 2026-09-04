@@ -32,20 +32,10 @@ export default async function handler(req, res) {
       });
     }
 
-    // Переменные окружения в Vercel
-    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2"; // ← ваш токен сюда
-    const isTest = true;
+    // ТЕСТОВЫЙ ТОКЕН (вставлен напрямую для проверки)
+    const token = "ueyAcTSS_3k2cuv6aGf_n_E2_SjS-BkKdDKqpFb2";
     const apiBase = "https://pgate-dev.bxb.delivery";
 
-    if (!token) {
-      res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
-      return res.status(500).json({
-        result: false,
-        error: "BXB token not configured in Vercel environment"
-      });
-    }
-
-    // Запрос к BXB
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
       headers: {
@@ -54,9 +44,11 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         invoiceNumber: String(invoiceNumber).slice(0, 20),
-        amount: Number(amount).toFixed(2),
+        amount: Number(Number(amount).toFixed(2)),
         currency,
         type_form: 1,
+        description: "Order from Wiggle House",
+        customer_id: "customer_" + Date.now(),
       }),
     });
 
