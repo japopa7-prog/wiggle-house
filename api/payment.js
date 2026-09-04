@@ -1,7 +1,7 @@
 // api/payment.js
 export default async function handler(req, res) {
   const corsHeaders = {
-    "Access-Control-Allow-Origin": "https://japopa7-prog.github.io",
+    "Access-Control-Allow-Origin": "*", // Укажи свой домен, например "https://japopa7-prog.github.io"
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type",
   };
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { invoiceNumber, amount, currency } = req.body;
+    const { invoiceNumber, amount, currency, email } = req.body;
 
     if (!invoiceNumber || !amount || !currency) {
       res.setHeader("Access-Control-Allow-Origin", corsHeaders["Access-Control-Allow-Origin"]);
@@ -29,11 +29,12 @@ export default async function handler(req, res) {
       });
     }
 
+    // ТВОЙ ПРОДОВЫЙ ТОКЕН
     const token = "HJLs_lGCcJzZ2UGQFgW65OSpYf3ebGxHsA19de1p";
     const apiBase = "https://pgate.bxb.delivery";
 
-    // ===== ГЛАВНОЕ ИЗМЕНЕНИЕ: amount как ЧИСЛО, а не строка =====
-    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : Number(amount);
+    // По документации: amount строго с 2 знаками после запятой и это число/строка (API принимает оба)
+    const numericAmount = Number(amount).toFixed(2);
 
     const bxbRes = await fetch(`${apiBase}/api/v1/payment`, {
       method: "POST",
@@ -41,26 +42,12 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`,
       },
+      // Строго по документации для type_form: 1 (обычная оплата картой)
       body: JSON.stringify({
         invoiceNumber: String(invoiceNumber).slice(0, 20),
         amount: numericAmount,
         currency: currency || "USD",
-        type_form: 1,
-        description: "Wiggle House order",
-        email: "customer@example.com",
-        customer_id: "cust_" + Date.now(),
-        billTo: {
-          firstName: "John",
-          lastName: "Doe",
-          address: "123 Main St",
-          city: "New York",
-          state: "NY",
-          zip: "10001",
-          countryCode: "840"
-        },
-        shipping: {
-          goodsCost: numericAmount
-        }
+        type_form: 1
       }),
     });
 
