@@ -1,9 +1,7 @@
 /* ============================================================
    Wiggle House — app.js
-   Товары, корзина, модальные окна и оплата BXB
    ============================================================ */
 
-// ---------- Палитра цветов PLA ----------
 const PALETTE = [
   { name:"Red", hex:"#E5433B" },
   { name:"Purple", hex:"#93279F" },
@@ -21,126 +19,49 @@ const PALETTE = [
   { name:"White", hex:"#F7F5F0" },
   { name:"Black", hex:"#2A2630" }
 ];
-function findColor(name){ return PALETTE.find(c => c.name === name) || {name, hex:"#ccc"}; }
+const findColor = n => PALETTE.find(c => c.name === n) || {name:n, hex:"#ccc"};
 
-// ---------- Товары с вашего сайта-конструктора ----------
+// Ссылки на фото — заменены на локальную папку assets/
+// Файлы надо будет залить в assets/ (см. инструкцию ниже)
 const PRODUCTS = [
-  {
-    id: 1,
-    name: "The Shroom Lamp — Red Pleated Mushroom Light",
-    price: 112,
-    desc: "Meet your new mood booster. This red pleated mushroom lamp brings instant retro vibes and warm, cozy light to any corner. Compact, bold, and impossible to ignore — it's the statement piece your space has been missing.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/aa802083-2131-4761-a7ab-4dea35c5397b.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/e87511a8-8882-4d66-a6e4-2b34d224d95b.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/7c0f9b99-e8ca-42f8-aa2a-8ddde06af1e4.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/fc5eb094-a81e-4420-9efc-c834d1e6148c.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/d6b37caa-e61e-4b1a-9ea3-e1c8dec568f7.webp"
-    ],
-    colorField: "Color",
-    colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"]
-  },
-  {
-    id: 2,
-    name: "Pleat One",
-    price: 112,
-    desc: "A sculptural table lamp with a pleated conical shade and a ribbed bell base. Bold blue and crisp white. 35 cm tall, 20 cm wide. Designed to be seen — on or off.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/1ebd62ca-3073-4285-a0ec-7a3ad452ac33.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/14b73704-166c-47f2-b9ab-fc8cdbec861e.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/bc0f504d-6cc9-44f5-a862-29d01224d5f9.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/e8b19eb2-4c4c-4979-aafd-e599d5a5ae84.webp"
-    ],
-    colorField: "Lamp base color",
-    colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"]
-  },
-  {
-    id: 3,
-    name: "The Bud — Twisted Ribbed Lamp",
-    price: 100,
-    desc: "A compact statement lamp with twisted ribs and a soft pink glow. Instant dopamine decor for any corner.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/69f60858-5785-4c2c-a325-994c41602202.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/c45a9f71-9168-49cf-b3a2-b0acbc329bed.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/db34455d-6b76-41ec-ab03-40d583838dc4.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/fb8f0e5f-ff4a-4704-aace-08d19c2dd5f5.webp"
-    ],
-    colorField: "Color",
-    colors: ["Pink","Red","Purple","Yellow","Orange","Sky Blue","Violet","White","Black"]
-  },
-  {
-    id: 4,
-    name: "Cloud Lamp",
-    price: 75,
-    desc: "A wavy, cloud-shaped shade on slim tripod legs. Soft, warm glow that works on a side table, nightstand, or shelf.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/8b23544d-47cd-4009-83d2-683e0cd7b7dc.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/d8ab496e-6591-44ad-9f9f-11d415e6eaf2.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/fa8e3b65-9a24-4785-825e-022924183c6f.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/a340d995-a972-47a5-be55-400c2c9133f1.webp"
-    ],
-    colorField: "Color",
-    colors: ["Pink","Orange","Yellow","Sky Blue","White","Black"]
-  },
-  {
-    id: 5,
-    name: "Clover Lamp",
-    price: 75,
-    desc: "A four-lobed, clover-shaped silhouette with a warm glow radiating from every curve. Frosted acrylic diffuses the light into a soft, colorful halo — the kind of lamp that works just as well as a nightlight as it does as the centerpiece on a nightstand.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/ee354b12-b85e-47d7-be30-ac3d010aa124.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/d9fbccf1-cf19-4957-b6c2-fcd10e0576d1.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/5c43d7a6-1ce9-4d00-8bb0-723cf14a9374.webp"
-    ],
-    colorField: "Color",
-    colors: ["Pink","Sky Blue","Yellow","Violet","White","Black"]
-  },
-  {
-    id: 6,
-    name: "Wave Magazine Rack",
-    price: 128,
-    desc: "An S-curved desktop rack that holds magazines and books upright, with room for a stack flat underneath.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/5af2db6a-a868-4e37-8083-3a1edfb19762.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/6866f577-2833-43a9-ba26-139520a44ca1.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/b68c6f21-90cf-4567-9516-241649405874.webp"
-    ],
-    colorField: "Color",
-    colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"]
-  },
-  {
-    id: 7,
-    name: "Wave Shelf",
-    price: 73,
-    desc: "An S-curved wall shelf on two mounting brackets — room for the things you actually reach for every day.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/463b8074-e70c-478f-9214-91be5d2e8e6b.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/48f0ecf6-bfdc-47a8-908f-51242a051e77.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/33727762-d55d-487c-8304-3ab140d2330a.webp"
-    ],
-    colorField: "Color",
-    colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"]
-  },
-  {
-    id: 8,
-    name: "Stack Nightstand — 2 Tier",
-    price: 160,
-    desc: "A compact two-tier version of our stacking nightstand — open cubby storage, same wave-edge detail.",
-    images: [
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/7b7872f8-4e96-410a-9272-20173ffcf8c3.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/030c9a1f-331c-4281-bb93-2ef5b8208ecb.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/1e4448bb-1880-4cf3-8094-f41e9365039c.webp",
-      "https://pub-bed0b67ad5704b5198219c1fb1924834.r2.dev/products/0f59acd4-2966-4830-9b3f-125e0399bbe1.webp"
-    ],
-    colorMode: "parts",
-    parts: [
-      { label: "Top", colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
-      { label: "Bottom", colors: ["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] }
-    ]
-  }
+  { id:1, name:"The Shroom Lamp — Red Pleated Mushroom Light", price:112,
+    desc:"Meet your new mood booster. This red pleated mushroom lamp brings instant retro vibes and warm, cozy light to any corner. Compact, bold, and impossible to ignore — it's the statement piece your space has been missing.",
+    images:["assets/shroom-1.webp","assets/shroom-2.webp","assets/shroom-3.webp","assets/shroom-4.webp","assets/shroom-5.webp"],
+    colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
+  { id:2, name:"Pleat One", price:112,
+    desc:"A sculptural table lamp with a pleated conical shade and a ribbed bell base. Bold blue and crisp white. 35 cm tall, 20 cm wide. Designed to be seen — on or off.",
+    images:["assets/pleat-1.webp","assets/pleat-2.webp","assets/pleat-3.webp","assets/pleat-4.webp"],
+    colorField:"Lamp base color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
+  { id:3, name:"The Bud — Twisted Ribbed Lamp", price:100,
+    desc:"A compact statement lamp with twisted ribs and a soft pink glow. Instant dopamine decor for any corner.",
+    images:["assets/bud-1.webp","assets/bud-2.webp","assets/bud-3.webp","assets/bud-4.webp"],
+    colorField:"Color", colors:["Pink","Red","Purple","Yellow","Orange","Sky Blue","Violet","White","Black"] },
+  { id:4, name:"Cloud Lamp", price:75,
+    desc:"A wavy, cloud-shaped shade on slim tripod legs. Soft, warm glow that works on a side table, nightstand, or shelf.",
+    images:["assets/cloud-1.webp","assets/cloud-2.webp","assets/cloud-3.webp","assets/cloud-4.webp"],
+    colorField:"Color", colors:["Pink","Orange","Yellow","Sky Blue","White","Black"] },
+  { id:5, name:"Clover Lamp", price:75,
+    desc:"A four-lobed, clover-shaped silhouette with a warm glow radiating from every curve. Frosted acrylic diffuses the light into a soft, colorful halo — the kind of lamp that works just as well as a nightlight as it does as the centerpiece on a nightstand.",
+    images:["assets/clover-1.webp","assets/clover-2.webp","assets/clover-3.webp"],
+    colorField:"Color", colors:["Pink","Sky Blue","Yellow","Violet","White","Black"] },
+  { id:6, name:"Wave Magazine Rack", price:128,
+    desc:"An S-curved desktop rack that holds magazines and books upright, with room for a stack flat underneath.",
+    images:["assets/wave-mag-1.webp","assets/wave-mag-2.webp","assets/wave-mag-3.webp"],
+    colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
+  { id:7, name:"Wave Shelf", price:73,
+    desc:"An S-curved wall shelf on two mounting brackets — room for the things you actually reach for every day.",
+    images:["assets/wave-shelf-1.webp","assets/wave-shelf-2.webp","assets/wave-shelf-3.webp"],
+    colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
+  { id:8, name:"Stack Nightstand — 2 Tier", price:160,
+    desc:"A compact two-tier version of our stacking nightstand — open cubby storage, same wave-edge detail.",
+    images:["assets/stack-1.webp","assets/stack-2.webp","assets/stack-3.webp","assets/stack-4.webp"],
+    colorMode:"parts",
+    parts:[
+      { label:"Top", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
+      { label:"Bottom", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] }
+    ] }
 ];
 
-// ---------- КОНФИГ ----------
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdznb";
 const BXB_WORKER_ENDPOINT = "https://wiggle-house.vercel.app/api/payment";
 const BXB_TEST_MODE = false;
@@ -148,45 +69,32 @@ const BXB_WIDGET_JS = BXB_TEST_MODE
   ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
   : "https://pgate.bxb.delivery/js/bxbpay-widget.js";
 
-// ---------- Состояние ----------
-let CART = []; // { id, name, price, qty, color }
+let CART = [];
 let lastOrderInfo = null;
 
-// ---------- Утилиты ----------
-const $ = (sel, root=document) => root.querySelector(sel);
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-function money(n){ return '$' + Number(n).toFixed(0); }
-function cartCount(){ return CART.reduce((n,i) => n + i.qty, 0); }
-function updateCartBadge(){ const el = $('#cartCount'); if (el) el.textContent = cartCount(); }
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const money = n => '$' + Number(n).toFixed(0);
+const cartCount = () => CART.reduce((n,i) => n + i.qty, 0);
+const updateCartBadge = () => { const el = $('#cartCount'); if (el) el.textContent = cartCount(); };
 
 function addToCart(product, color){
   const key = product.id + '::' + (color || '');
-  const existing = CART.find(i => i.key === key);
-  if (existing) existing.qty += 1;
-  else CART.push({
-    key,
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    color: color || '',
-    qty: 1
-  });
+  const ex = CART.find(i => i.key === key);
+  if (ex) ex.qty += 1;
+  else CART.push({ key, id: product.id, name: product.name, price: product.price, color: color || '', qty: 1 });
   updateCartBadge();
 }
 
-// ---------- HERO color dial ----------
+/* ---------- HERO ---------- */
 function initHeroDial(){
-  const dial = $('#colorDial');
-  const demoImg = $('#demoImg');
+  const dial = $('#colorDial'); if (!dial) return;
   const demoLabel = $('#demoLabel');
-  if (!dial) return;
-  const heroColors = ["Pink","Orange","Yellow","Sky Blue","Violet","White"];
-  heroColors.forEach((name, idx) => {
+  ["Pink","Orange","Yellow","Sky Blue","Violet","White"].forEach((name, i) => {
     const c = findColor(name);
     const d = document.createElement('div');
-    d.className = 'swatch' + (idx === 0 ? ' active' : '');
-    d.style.background = c.hex;
-    d.title = name;
+    d.className = 'swatch' + (i === 0 ? ' active' : '');
+    d.style.background = c.hex; d.title = name;
     d.addEventListener('click', () => {
       $$('.swatch', dial).forEach(s => s.classList.remove('active'));
       d.classList.add('active');
@@ -196,21 +104,22 @@ function initHeroDial(){
   });
 }
 
-// ---------- Отрисовка товаров ----------
+/* ---------- ТОВАРЫ ---------- */
 function renderProducts(){
-  const grid = $('#productGrid');
-  if (!grid) return;
+  const grid = $('#productGrid'); if (!grid) return;
   grid.innerHTML = '';
 
   PRODUCTS.forEach(p => {
     const card = document.createElement('div');
     card.className = 'card';
 
-    // выбранный цвет по умолчанию
     const defaultColor = p.colorMode === 'parts'
-      ? (p.parts[0]?.colors[0] || '')
-      : (p.colors?.[0] || '');
+      ? p.parts.map(part => part.colors[0]).join(' / ')
+      : p.colors[0];
     p._selectedColor = defaultColor;
+    p._selectedParts = p.colorMode === 'parts'
+      ? p.parts.map(part => part.colors[0])
+      : null;
 
     const colorBlock = p.colorMode === 'parts'
       ? p.parts.map((part, i) => `
@@ -240,9 +149,9 @@ function renderProducts(){
 
     card.innerHTML = `
       <div class="card-media">
-        <img src="${p.images[0]}" alt="${p.name}">
+        <img src="${p.images[0]}" alt="${p.name}" loading="lazy" onerror="this.src='https://placehold.co/400x500/F4E9DC/6b6376?text=+'">
       </div>
-      ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((img,i)=>`<div class="thumb ${i===0?'active':''}" data-src="${img}"><img src="${img}" alt=""></div>`).join('')}</div>` : ''}
+      ${p.images.length > 1 ? `<div class="thumbs">${p.images.map((img,i)=>`<div class="thumb ${i===0?'active':''}" data-src="${img}"><img src="${img}" alt="" loading="lazy"></div>`).join('')}</div>` : ''}
       <h3>${p.name}</h3>
       <p class="desc">${p.desc}</p>
       ${colorBlock}
@@ -257,10 +166,9 @@ function renderProducts(){
       </div>
     `;
 
-    // галерея миниатюр
     const mainImg = $('.card-media img', card);
     $$('.thumb', card).forEach(t => {
-      t.addEventListener('click', (e) => {
+      t.addEventListener('click', e => {
         e.stopPropagation();
         mainImg.src = t.dataset.src;
         $$('.thumb', card).forEach(o => o.classList.remove('active'));
@@ -268,19 +176,18 @@ function renderProducts(){
       });
     });
 
-    // выбор цвета
     if (p.colorMode === 'parts'){
       $$('.swatch-picker', card).forEach(picker => {
-        const partIdx = picker.dataset.part;
+        const partIdx = Number(picker.dataset.part);
         const nameEl = picker.parentElement.querySelector('.color-name');
         $$('.sw', picker).forEach(sw => {
-          sw.addEventListener('click', (e) => {
+          sw.addEventListener('click', e => {
             e.stopPropagation();
             $$('.sw', picker).forEach(o => o.classList.remove('active'));
             sw.classList.add('active');
             if (nameEl) nameEl.textContent = sw.dataset.color;
-            p._selectedColors = p._selectedColors || {};
-            p._selectedColors[partIdx] = sw.dataset.color;
+            p._selectedParts[partIdx] = sw.dataset.color;
+            p._selectedColor = p._selectedParts.join(' / ');
           });
         });
       });
@@ -288,7 +195,7 @@ function renderProducts(){
       const picker = $('.swatch-picker', card);
       const nameEl = $('.color-name', card);
       $$('.sw', picker).forEach(sw => {
-        sw.addEventListener('click', (e) => {
+        sw.addEventListener('click', e => {
           e.stopPropagation();
           $$('.sw', picker).forEach(o => o.classList.remove('active'));
           sw.classList.add('active');
@@ -298,14 +205,10 @@ function renderProducts(){
       });
     }
 
-    // добавить в корзину
     const addBtn = $('.add-btn', card);
-    addBtn.addEventListener('click', (e) => {
+    addBtn.addEventListener('click', e => {
       e.stopPropagation();
-      const color = p.colorMode === 'parts'
-        ? Object.values(p._selectedColors || {}).join(' / ') || p._selectedColor
-        : p._selectedColor;
-      addToCart(p, color);
+      addToCart(p, p._selectedColor);
       addBtn.classList.add('added');
       addBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M5 13l4 4L19 7"/></svg>`;
       setTimeout(() => {
@@ -314,24 +217,18 @@ function renderProducts(){
       }, 900);
     });
 
-    // купить сейчас
-    $('.buy-now-btn', card).addEventListener('click', (e) => {
+    $('.buy-now-btn', card).addEventListener('click', e => {
       e.stopPropagation();
-      const color = p.colorMode === 'parts'
-        ? Object.values(p._selectedColors || {}).join(' / ') || p._selectedColor
-        : p._selectedColor;
-      addToCart(p, color);
+      addToCart(p, p._selectedColor);
       openOrderModal();
     });
 
-    // клик по карточке — открыть детали
     card.addEventListener('click', () => openProductModal(p));
-
     grid.appendChild(card);
   });
 }
 
-// ---------- Детали товара ----------
+/* ---------- МОДАЛКА ТОВАРА ---------- */
 function openProductModal(p){
   const overlay = $('#productOverlay');
   const content = $('#productContent');
@@ -339,12 +236,13 @@ function openProductModal(p){
 
   const colorBlock = p.colorMode === 'parts'
     ? p.parts.map((part, i) => `
-        <div class="color-info" data-part="${i}">
+        <div class="color-info">
           <div class="row"><span class="lbl">${part.label}</span></div>
           <div class="swatch-picker" data-part="${i}">
             ${part.colors.map((cName, ci) => {
               const c = findColor(cName);
-              return `<div class="sw ${ci===0?'active':''}" data-color="${cName}" style="background:${c.hex}" title="${cName}"></div>`;
+              const active = (p._selectedParts && p._selectedParts[i] === cName) ? ' active' : (ci === 0 && !p._selectedParts ? ' active' : '');
+              return `<div class="sw ${active}" data-color="${cName}" style="background:${c.hex}" title="${cName}"></div>`;
             }).join('')}
           </div>
         </div>
@@ -353,9 +251,10 @@ function openProductModal(p){
       <div class="color-info">
         <div class="row"><span class="lbl">${p.colorField || 'Color'}</span></div>
         <div class="swatch-picker">
-          ${p.colors.map((cName, ci) => {
+          ${p.colors.map(cName => {
             const c = findColor(cName);
-            return `<div class="sw ${ci===0?'active':''}" data-color="${cName}" style="background:${c.hex}" title="${cName}"></div>`;
+            const active = (p._selectedColor === cName) ? ' active' : '';
+            return `<div class="sw ${active}" data-color="${cName}" style="background:${c.hex}" title="${cName}"></div>`;
           }).join('')}
         </div>
       </div>
@@ -364,8 +263,8 @@ function openProductModal(p){
   content.innerHTML = `
     <div class="pm-grid">
       <div>
-        <div class="pm-media"><img id="pmMainImg" src="${p.images[0]}" alt="${p.name}"></div>
-        ${p.images.length > 1 ? `<div class="pm-thumbs">${p.images.map((img,i)=>`<div class="thumb ${i===0?'active':''}" data-src="${img}"><img src="${img}" alt=""></div>`).join('')}</div>` : ''}
+        <div class="pm-media"><img id="pmMainImg" src="${p.images[0]}" alt="${p.name}" loading="lazy"></div>
+        ${p.images.length > 1 ? `<div class="pm-thumbs">${p.images.map((img,i)=>`<div class="thumb ${i===0?'active':''}" data-src="${img}"><img src="${img}" alt="" loading="lazy"></div>`).join('')}</div>` : ''}
       </div>
       <div class="pm-info">
         <h2>${p.name}</h2>
@@ -389,36 +288,32 @@ function openProductModal(p){
     });
   });
 
-  // выбор цвета
-  let selected = {};
   if (p.colorMode === 'parts'){
     $$('.swatch-picker', content).forEach(picker => {
-      const partIdx = picker.dataset.part;
-      const first = $('.sw', picker);
-      selected[partIdx] = first?.dataset.color;
+      const partIdx = Number(picker.dataset.part);
       $$('.sw', picker).forEach(sw => {
         sw.addEventListener('click', () => {
           $$('.sw', picker).forEach(o => o.classList.remove('active'));
           sw.classList.add('active');
-          selected[partIdx] = sw.dataset.color;
+          if (!p._selectedParts) p._selectedParts = [];
+          p._selectedParts[partIdx] = sw.dataset.color;
+          p._selectedColor = p._selectedParts.join(' / ');
         });
       });
     });
   } else {
     const picker = $('.swatch-picker', content);
-    selected[0] = $('.sw', picker)?.dataset.color;
     $$('.sw', picker).forEach(sw => {
       sw.addEventListener('click', () => {
         $$('.sw', picker).forEach(o => o.classList.remove('active'));
         sw.classList.add('active');
-        selected[0] = sw.dataset.color;
+        p._selectedColor = sw.dataset.color;
       });
     });
   }
-  const colorForCart = () => Object.values(selected).filter(Boolean).join(' / ');
 
   $('#pmAddBtn', content).addEventListener('click', () => {
-    addToCart(p, colorForCart());
+    addToCart(p, p._selectedColor);
     const b = $('#pmAddBtn', content);
     const o = b.textContent;
     b.textContent = 'Added ✓';
@@ -426,7 +321,7 @@ function openProductModal(p){
   });
 
   $('#pmBuyBtn', content).addEventListener('click', () => {
-    addToCart(p, colorForCart());
+    addToCart(p, p._selectedColor);
     overlay.classList.remove('open');
     openOrderModal();
   });
@@ -434,7 +329,7 @@ function openProductModal(p){
   overlay.classList.add('open');
 }
 
-// ---------- Отзывы ----------
+/* ---------- ОТЗЫВЫ ---------- */
 const TESTIMONIALS = [
   { name:"J. MARTINEZ — AUSTIN, TX", text:"The Cloud Lamp is the first thing people ask about when they walk into my living room. Packaging alone felt like a gift." },
   { name:"S. OKAFOR — BROOKLYN, NY", text:"Ordered the Wave Shelf in red — genuinely did not expect a 3D-printed piece to feel this premium." },
@@ -443,26 +338,16 @@ const TESTIMONIALS = [
   { name:"L. NGUYEN — MIAMI, FL", text:"The Stack Nightstand looks like it belongs in a design magazine, not something that came out of a 3D printer." },
   { name:"D. FOSTER — CHICAGO, IL", text:"Every single piece was wrapped like a birthday present." }
 ];
-
 function renderTestimonials(){
-  const track = $('#testiTrack');
-  if (!track) return;
-  const build = (t) => `
-    <div class="testi-card">
-      <div class="stars">★★★★★</div>
-      <p>"${t.text}"</p>
-      <div class="testi-name">${t.name}</div>
-    </div>`;
+  const track = $('#testiTrack'); if (!track) return;
+  const build = t => `<div class="testi-card"><div class="stars">★★★★★</div><p>"${t.text}"</p><div class="testi-name">${t.name}</div></div>`;
   track.innerHTML = [...TESTIMONIALS, ...TESTIMONIALS].map(build).join('');
 }
 
-// ---------- Корзина / модальное окно ----------
-const orderOverlay = () => $('#orderOverlay');
-const orderContent = () => $('#orderContent');
-
+/* ---------- КОРЗИНА ---------- */
 function openOrderModal(){
-  const oc = orderContent();
-  const ov = orderOverlay();
+  const oc = $('#orderContent');
+  const ov = $('#orderOverlay');
   if (!oc || !ov) return;
 
   oc.innerHTML = `
@@ -479,13 +364,13 @@ function openOrderModal(){
       <div class="field"><input type="text" name="address1" placeholder="Street address" required></div>
       <div class="field-row">
         <div class="field"><input type="text" name="city" placeholder="City" required></div>
-        <div class="field"><input type="text" name="state" placeholder="State (2-letter, e.g. NY)" maxlength="2" style="text-transform:uppercase" required></div>
+        <div class="field"><input type="text" name="state" placeholder="State (2-letter)" maxlength="2" style="text-transform:uppercase" required></div>
       </div>
       <div class="field-row">
-        <div class="field"><input type="text" name="zip" placeholder="ZIP code" required></div>
-        <div class="field"><input type="text" name="country" placeholder="Country" value="United States" readonly></div>
+        <div class="field"><input type="text" name="zip" placeholder="ZIP" required></div>
+        <div class="field"><input type="text" name="country" value="United States" readonly></div>
       </div>
-      <div class="field"><textarea name="notes" rows="2" placeholder="Colors, sizes, or anything else we should know"></textarea></div>
+      <div class="field"><textarea name="notes" rows="2" placeholder="Colors, sizes, anything else"></textarea></div>
       <button type="submit" class="btn btn-solid" id="orderSubmitBtn">Send order</button>
       <p class="form-note">No payment is collected here — this just sends us your order. We'll email you a payment link.</p>
     </form>
@@ -540,8 +425,7 @@ function renderCart(){
 }
 
 function wireOrderForm(){
-  const form = $('#orderForm');
-  if (!form) return;
+  const form = $('#orderForm'); if (!form) return;
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (CART.length === 0) return;
@@ -551,9 +435,9 @@ function wireOrderForm(){
     btn.disabled = true;
 
     const fd = new FormData(form);
-    const orderSummary = CART.map(i => `${i.name}${i.color ? ' ['+i.color+']' : ''} x${i.qty} (${money(i.price*i.qty)})`).join(', ');
+    const summary = CART.map(i => `${i.name}${i.color ? ' ['+i.color+']' : ''} x${i.qty} (${money(i.price*i.qty)})`).join(', ');
     const total = CART.reduce((s,i) => s + i.price*i.qty, 0);
-    fd.append('order_summary', orderSummary);
+    fd.append('order_summary', summary);
     fd.append('order_total', money(total));
 
     lastOrderInfo = {
@@ -565,31 +449,25 @@ function wireOrderForm(){
       state: (fd.get('state') || '').toUpperCase(),
       zip: fd.get('zip') || '',
       total,
-      itemsSummary: orderSummary
+      itemsSummary: summary
     };
 
     try {
-      const res = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        body: fd,
-        headers: { 'Accept': 'application/json' }
-      });
+      const res = await fetch(FORMSPREE_ENDPOINT, { method:'POST', body: fd, headers:{'Accept':'application/json'} });
       if (res.ok) showOrderSuccess();
       else {
-        btn.textContent = original;
-        btn.disabled = false;
+        btn.textContent = original; btn.disabled = false;
         alert("Something went wrong sending your order — please email us directly instead.");
       }
     } catch {
-      btn.textContent = original;
-      btn.disabled = false;
-      alert("Couldn't reach the order form — please check your connection, or email us directly.");
+      btn.textContent = original; btn.disabled = false;
+      alert("Couldn't reach the order form — please check your connection.");
     }
   });
 }
 
 function showOrderSuccess(){
-  const oc = orderContent();
+  const oc = $('#orderContent');
   oc.innerHTML = `
     <div class="order-success">
       <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg>
@@ -604,7 +482,7 @@ function showOrderSuccess(){
   updateCartBadge();
 }
 
-// ---------- BXB оплата ----------
+/* ---------- ОПЛАТА BXB ---------- */
 function loadBxbScript(){
   return new Promise((resolve, reject) => {
     if (window.bxbPayWidget) return resolve();
@@ -659,11 +537,7 @@ async function payWithBXB(){
         zip: lastOrderInfo.zip || "10001",
         countryCode: 840
       },
-      shipping: {
-        goodsCost: amountNum,
-        deliveryCost: 0,
-        deliveryService: 'BXB'
-      }
+      shipping: { goodsCost: amountNum, deliveryCost: 0, deliveryService: 'BXB' }
     };
 
     window.bxbPayWidget.open({
@@ -688,47 +562,38 @@ async function payWithBXB(){
   }
 }
 
-// ---------- Инициализация ----------
+/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
+function bindClose(overlaySel, closeSel){
+  const ov = document.querySelector(overlaySel);
+  const btn = document.querySelector(closeSel);
+  if (!ov) return;
+  if (btn) btn.addEventListener('click', () => ov.classList.remove('open'));
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   initHeroDial();
   renderProducts();
   renderTestimonials();
 
-  // корзина
   const cartBtn = $('#cartBtn');
   if (cartBtn) cartBtn.addEventListener('click', openOrderModal);
 
-  // закрытие модалок
-  const orderClose = $('#orderClose');
-  const orderOv = $('#orderOverlay');
-  if (orderClose && orderOv){
-    orderClose.addEventListener('click', () => orderOv.classList.remove('open'));
-    orderOv.addEventListener('click', (e) => { if (e.target === orderOv) orderOv.classList.remove('open'); });
-  }
+  bindClose('#orderOverlay', '#orderClose');
+  bindClose('#productOverlay', '#productClose');
 
-  const productClose = $('#productClose');
-  const productOv = $('#productOverlay');
-  if (productClose && productOv){
-    productClose.addEventListener('click', () => productOv.classList.remove('open'));
-    productOv.addEventListener('click', (e) => { if (e.target === productOv) productOv.classList.remove('open'); });
-  }
-
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     if (e.key === 'Escape'){
-      orderOv?.classList.remove('open');
-      productOv?.classList.remove('open');
+      document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
     }
   });
 
-  // мобильное меню
-  const burger = $('#burger');
-  const mobileMenu = $('#mobileMenu');
-  if (burger && mobileMenu){
-    burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
-    $$('a', mobileMenu).forEach(a => a.addEventListener('click', () => mobileMenu.classList.remove('open')));
+  const burger = $('#burger'), menu = $('#mobileMenu');
+  if (burger && menu){
+    burger.addEventListener('click', () => menu.classList.toggle('open'));
+    $$('a', menu).forEach(a => a.addEventListener('click', () => menu.classList.remove('open')));
   }
 
-  // lead form
   const lead = $('#leadForm');
   if (lead){
     lead.addEventListener('submit', function(e){
