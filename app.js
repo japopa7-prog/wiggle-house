@@ -21,40 +21,55 @@ const PALETTE = [
 ];
 const findColor = n => PALETTE.find(c => c.name === n) || {name:n, hex:"#ccc"};
 
-// Ссылки на фото — заменены на локальную папку assets/
-// Файлы надо будет залить в assets/ (см. инструкцию ниже)
 const PRODUCTS = [
   { id:1, name:"The Shroom Lamp — Red Pleated Mushroom Light", price:112,
     desc:"Meet your new mood booster. This red pleated mushroom lamp brings instant retro vibes and warm, cozy light to any corner. Compact, bold, and impossible to ignore — it's the statement piece your space has been missing.",
-    images:["assets/shroom-1.webp","assets/shroom-2.webp","assets/shroom-3.webp","assets/shroom-4.webp","assets/shroom-5.webp"],
+    images:[
+      "assets/shroom-1.webp","assets/shroom-2.webp","assets/shroom-3.webp",
+      "assets/shroom-4.webp","assets/shroom-5.webp"
+    ],
     colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
   { id:2, name:"Pleat One", price:112,
     desc:"A sculptural table lamp with a pleated conical shade and a ribbed bell base. Bold blue and crisp white. 35 cm tall, 20 cm wide. Designed to be seen — on or off.",
-    images:["assets/pleat-1.webp","assets/pleat-2.webp","assets/pleat-3.webp","assets/pleat-4.webp"],
+    images:[
+      "assets/pleat-1.webp","assets/pleat-2.webp","assets/pleat-3.webp","assets/pleat-4.webp"
+    ],
     colorField:"Lamp base color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
   { id:3, name:"The Bud — Twisted Ribbed Lamp", price:100,
     desc:"A compact statement lamp with twisted ribs and a soft pink glow. Instant dopamine decor for any corner.",
-    images:["assets/bud-1.webp","assets/bud-2.webp","assets/bud-3.webp","assets/bud-4.webp"],
+    images:[
+      "assets/bud-1.webp","assets/bud-2.webp","assets/bud-3.webp","assets/bud-4.webp"
+    ],
     colorField:"Color", colors:["Pink","Red","Purple","Yellow","Orange","Sky Blue","Violet","White","Black"] },
   { id:4, name:"Cloud Lamp", price:75,
     desc:"A wavy, cloud-shaped shade on slim tripod legs. Soft, warm glow that works on a side table, nightstand, or shelf.",
-    images:["assets/cloud-1.webp","assets/cloud-2.webp","assets/cloud-3.webp","assets/cloud-4.webp"],
+    images:[
+      "assets/cloud-1.webp","assets/cloud-2.webp","assets/cloud-3.webp","assets/cloud-4.webp"
+    ],
     colorField:"Color", colors:["Pink","Orange","Yellow","Sky Blue","White","Black"] },
   { id:5, name:"Clover Lamp", price:75,
     desc:"A four-lobed, clover-shaped silhouette with a warm glow radiating from every curve. Frosted acrylic diffuses the light into a soft, colorful halo — the kind of lamp that works just as well as a nightlight as it does as the centerpiece on a nightstand.",
-    images:["assets/clover-1.webp","assets/clover-2.webp","assets/clover-3.webp"],
+    images:[
+      "assets/clover-1.webp","assets/clover-2.webp","assets/clover-3.webp"
+    ],
     colorField:"Color", colors:["Pink","Sky Blue","Yellow","Violet","White","Black"] },
   { id:6, name:"Wave Magazine Rack", price:128,
     desc:"An S-curved desktop rack that holds magazines and books upright, with room for a stack flat underneath.",
-    images:["assets/wave-mag-1.webp","assets/wave-mag-2.webp","assets/wave-mag-3.webp"],
+    images:[
+      "assets/wave-mag-1.webp","assets/wave-mag-2.webp","assets/wave-mag-3.webp"
+    ],
     colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
   { id:7, name:"Wave Shelf", price:73,
     desc:"An S-curved wall shelf on two mounting brackets — room for the things you actually reach for every day.",
-    images:["assets/wave-shelf-1.webp","assets/wave-shelf-2.webp","assets/wave-shelf-3.webp"],
+    images:[
+      "assets/wave-shelf-1.webp","assets/wave-shelf-2.webp","assets/wave-shelf-3.webp"
+    ],
     colorField:"Color", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
   { id:8, name:"Stack Nightstand — 2 Tier", price:160,
     desc:"A compact two-tier version of our stacking nightstand — open cubby storage, same wave-edge detail.",
-    images:["assets/stack-1.webp","assets/stack-2.webp","assets/stack-3.webp","assets/stack-4.webp"],
+    images:[
+      "assets/stack-1.webp","assets/stack-2.webp","assets/stack-3.webp","assets/stack-4.webp"
+    ],
     colorMode:"parts",
     parts:[
       { label:"Top", colors:["Red","Pink","Purple","Yellow","Orange","Lime","Violet","Sky Blue","Blue","Beige","White","Black"] },
@@ -78,6 +93,31 @@ const money = n => '$' + Number(n).toFixed(0);
 const cartCount = () => CART.reduce((n,i) => n + i.qty, 0);
 const updateCartBadge = () => { const el = $('#cartCount'); if (el) el.textContent = cartCount(); };
 
+/* ---------- Блокировка скролла фона при открытой модалке ---------- */
+function lockScroll(){ document.body.classList.add('modal-open'); }
+function unlockScroll(){
+  // разблокируем только если нет других открытых модалок
+  if (!document.querySelector('.modal-overlay.open')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+function openOverlay(el){
+  if (!el) return;
+  el.classList.add('open');
+  lockScroll();
+}
+function closeOverlay(el){
+  if (!el) return;
+  el.classList.remove('open');
+  unlockScroll();
+}
+function closeAllOverlays(){
+  document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
+  document.body.classList.remove('modal-open');
+}
+
+/* ---------- Корзина ---------- */
 function addToCart(product, color){
   const key = product.id + '::' + (color || '');
   const ex = CART.find(i => i.key === key);
@@ -104,7 +144,7 @@ function initHeroDial(){
   });
 }
 
-/* ---------- ТОВАРЫ ---------- */
+/* ---------- Отрисовка товаров ---------- */
 function renderProducts(){
   const grid = $('#productGrid'); if (!grid) return;
   grid.innerHTML = '';
@@ -117,9 +157,7 @@ function renderProducts(){
       ? p.parts.map(part => part.colors[0]).join(' / ')
       : p.colors[0];
     p._selectedColor = defaultColor;
-    p._selectedParts = p.colorMode === 'parts'
-      ? p.parts.map(part => part.colors[0])
-      : null;
+    p._selectedParts = p.colorMode === 'parts' ? p.parts.map(part => part.colors[0]) : null;
 
     const colorBlock = p.colorMode === 'parts'
       ? p.parts.map((part, i) => `
@@ -228,7 +266,7 @@ function renderProducts(){
   });
 }
 
-/* ---------- МОДАЛКА ТОВАРА ---------- */
+/* ---------- Модалка товара ---------- */
 function openProductModal(p){
   const overlay = $('#productOverlay');
   const content = $('#productContent');
@@ -322,14 +360,14 @@ function openProductModal(p){
 
   $('#pmBuyBtn', content).addEventListener('click', () => {
     addToCart(p, p._selectedColor);
-    overlay.classList.remove('open');
+    closeOverlay(overlay);
     openOrderModal();
   });
 
-  overlay.classList.add('open');
+  openOverlay(overlay);
 }
 
-/* ---------- ОТЗЫВЫ ---------- */
+/* ---------- Отзывы ---------- */
 const TESTIMONIALS = [
   { name:"J. MARTINEZ — AUSTIN, TX", text:"The Cloud Lamp is the first thing people ask about when they walk into my living room. Packaging alone felt like a gift." },
   { name:"S. OKAFOR — BROOKLYN, NY", text:"Ordered the Wave Shelf in red — genuinely did not expect a 3D-printed piece to feel this premium." },
@@ -344,7 +382,7 @@ function renderTestimonials(){
   track.innerHTML = [...TESTIMONIALS, ...TESTIMONIALS].map(build).join('');
 }
 
-/* ---------- КОРЗИНА ---------- */
+/* ---------- Корзина / окно заказа ---------- */
 function openOrderModal(){
   const oc = $('#orderContent');
   const ov = $('#orderOverlay');
@@ -378,7 +416,7 @@ function openOrderModal(){
 
   wireOrderForm();
   renderCart();
-  ov.classList.add('open');
+  openOverlay(ov);
 }
 
 function renderCart(){
@@ -482,7 +520,7 @@ function showOrderSuccess(){
   updateCartBadge();
 }
 
-/* ---------- ОПЛАТА BXB ---------- */
+/* ---------- BXB ---------- */
 function loadBxbScript(){
   return new Promise((resolve, reject) => {
     if (window.bxbPayWidget) return resolve();
@@ -513,7 +551,7 @@ async function payWithBXB(){
     });
     const rawText = await res.text();
     let data;
-    try { data = JSON.parse(rawText); } catch { throw new Error(`Worker returned non-JSON: ${rawText.slice(0,300)}`); }
+    try || { data = JSON.parse(rawText); } catch { throw new Error(`Worker returned non-JSON: ${rawText.slice(0,300)}`); }
     if (!data.result || !data.token) throw new Error(`Worker error: ${JSON.stringify(data).slice(0,300)}`);
 
     await loadBxbScript();
@@ -529,7 +567,7 @@ async function payWithBXB(){
       email: lastOrderInfo.email || "customer@example.com",
       customer_id: lastOrderInfo.email || "customer_" + Date.now(),
       billTo: {
-        firstName: lastOrderInfo.firstName || "John",
+        firstName: lastOrderInfo.firstName "John",
         lastName: lastOrderInfo.lastName || "Doe",
         address: lastOrderInfo.address1 || "123 Main St",
         city: lastOrderInfo.city || "New York",
@@ -562,13 +600,13 @@ async function payWithBXB(){
   }
 }
 
-/* ---------- ИНИЦИАЛИЗАЦИЯ ---------- */
+/* ---------- Инициализация ---------- */
 function bindClose(overlaySel, closeSel){
   const ov = document.querySelector(overlaySel);
   const btn = document.querySelector(closeSel);
   if (!ov) return;
-  if (btn) btn.addEventListener('click', () => ov.classList.remove('open'));
-  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+  if (btn) btn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); closeOverlay(ov); });
+  ov.addEventListener('click', e => { if (e.target === ov) closeOverlay(ov); });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -583,9 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
   bindClose('#productOverlay', '#productClose');
 
   document.addEventListener('keydown', e => {
-    if (e.key === 'Escape'){
-      document.querySelectorAll('.modal-overlay.open').forEach(o => o.classList.remove('open'));
-    }
+    if (e.key === 'Escape') closeAllOverlays();
   });
 
   const burger = $('#burger'), menu = $('#mobileMenu');
