@@ -186,9 +186,11 @@ header{position:sticky; top:0; z-index:100; background:rgba(251,243,234,0.92); b
   opacity:1;
 }
 
-/* Большой и удобный крестик */
+/* Крестик — вынесен в фиксированную позицию относительно окна */
 .modal-close{
-  position:absolute; top:12px; right:12px;
+  position:fixed;
+  top:calc(50% - 45vh + 12px);
+  right:calc(50% - min(50vw - 16px, 230px - 0px) + 12px);
   width:44px; height:44px;
   min-width:44px; min-height:44px;
   border-radius:50%;
@@ -198,7 +200,7 @@ header{position:sticky; top:0; z-index:100; background:rgba(251,243,234,0.92); b
   cursor:pointer;
   z-index:1000;
   padding:0;
-  box-shadow:0 2px 8px rgba(36,31,46,0.08);
+  box-shadow:0 2px 10px rgba(36,31,46,0.15);
   transition: transform .15s ease, background .15s ease;
   -webkit-tap-highlight-color: transparent;
 }
@@ -299,9 +301,21 @@ footer{padding:50px 0 30px; border-top:1px solid var(--line);}
   .demo-stage{max-width:260px;}
   .color-dial{max-width:260px; gap:8px;}
   .swatch{width:26px; height:26px;}
-  .modal-overlay{padding:10px;}
-  .modal-box{padding:20px 16px; border-radius:18px; max-height:94vh; padding-top:56px;}
+  .modal-overlay{padding:10px; align-items:flex-start;}
+  .modal-box{padding:20px 16px; border-radius:18px; max-height:none; padding-top:68px;}
   .modal-box h3{font-size:17px; padding-right:48px;}
+
+  /* Мобильный крестик — фиксированный в правом верхнем углу экрана */
+  .modal-close{
+    position:fixed;
+    top:14px;
+    right:14px;
+    width:48px; height:48px;
+    min-width:48px; min-height:48px;
+    background:var(--card);
+    box-shadow:0 4px 14px rgba(36,31,46,0.25);
+  }
+
   .section-head{margin-bottom:24px;}
   .hero-ctas{gap:10px;}
   .trust-row{gap:14px;}
@@ -309,7 +323,6 @@ footer{padding:50px 0 30px; border-top:1px solid var(--line);}
   .foot-bottom{font-size:11.5px;}
   .cart-line{font-size:12.5px;}
   .cart-line .qty-controls{gap:5px;}
-  .modal-close{ top:10px; right:10px; width:48px; height:48px; min-width:48px; min-height:48px; }
   #bxbpay-widget, #bxbpay-widget iframe{min-height:600px !important;}
 }
 @media (max-width: 380px){
