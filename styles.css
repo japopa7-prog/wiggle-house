@@ -16,6 +16,7 @@
 *{box-sizing:border-box; margin:0; padding:0;}
 html{scroll-behavior:smooth; -webkit-text-size-adjust:100%;}
 body{font-family:'Inter', sans-serif; background:var(--cream); color:var(--ink); -webkit-font-smoothing:antialiased; overflow-x:hidden; min-height:100vh;}
+body.modal-open{ overflow:hidden; }
 h1,h2,h3,.display{font-family:'Fredoka', sans-serif; font-weight:600; letter-spacing:-0.01em;}
 .mono{font-family:'Space Mono', monospace;}
 a{color:inherit; text-decoration:none;}
@@ -151,18 +152,66 @@ header{position:sticky; top:0; z-index:100; background:rgba(251,243,234,0.92); b
 .form-card .btn{width:100%; margin-top:6px;}
 .form-note{font-size:11.5px; color:var(--ink-soft); margin-top:10px; text-align:center;}
 
-/* ---------- modals ---------- */
-.modal-overlay{position:fixed; inset:0; z-index:300; background:rgba(36,31,46,0.55); backdrop-filter:blur(3px); display:none; align-items:center; justify-content:center; padding:16px;}
-.modal-overlay.open{display:flex;}
-.modal-box{background:var(--cream); border-radius:24px; width:100%; max-width:460px; max-height:90vh; overflow-y:auto; padding:24px 22px; position:relative; box-shadow:var(--shadow-lg);}
-.modal-close{position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; border:1.5px solid var(--line); background:var(--card); display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:10;}
-.modal-close svg{width:16px; height:16px; pointer-events:none;}
-.modal-box h3{font-size:19px; margin-bottom:4px; padding-right:30px;}
+/* ---------- MODALS ---------- */
+.modal-overlay{
+  position:fixed; inset:0; z-index:300;
+  background:rgba(36,31,46,0.55);
+  backdrop-filter:blur(3px);
+  -webkit-backdrop-filter:blur(3px);
+  display:flex; align-items:center; justify-content:center;
+  padding:16px;
+  opacity:0; visibility:hidden;
+  transition: opacity .25s ease, visibility .25s ease;
+  overscroll-behavior: contain;
+}
+.modal-overlay.open{ opacity:1; visibility:visible; }
+
+.modal-box{
+  background:var(--cream);
+  border-radius:24px;
+  width:100%; max-width:460px;
+  max-height:90vh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior: contain;
+  padding:24px 22px;
+  position:relative;
+  box-shadow:var(--shadow-lg);
+  transform: translateY(20px) scale(.96);
+  opacity:0;
+  transition: transform .3s cubic-bezier(.2,.9,.3,1.1), opacity .25s ease;
+}
+.modal-overlay.open .modal-box{
+  transform: translateY(0) scale(1);
+  opacity:1;
+}
+
+/* Большой и удобный крестик */
+.modal-close{
+  position:absolute; top:12px; right:12px;
+  width:44px; height:44px;
+  min-width:44px; min-height:44px;
+  border-radius:50%;
+  border:1.5px solid var(--line);
+  background:var(--card);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer;
+  z-index:1000;
+  padding:0;
+  box-shadow:0 2px 8px rgba(36,31,46,0.08);
+  transition: transform .15s ease, background .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close:hover{ transform:scale(1.08); background:var(--cream-deep); }
+.modal-close:active{ transform:scale(.94); }
+.modal-close svg{ width:18px; height:18px; pointer-events:none; }
+
+.modal-box h3{font-size:19px; margin-bottom:4px; padding-right:52px;}
 .modal-sub{font-size:13px; color:var(--ink-soft); margin-bottom:16px;}
 .cart-lines{margin-bottom:14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:10px 0;}
 .cart-line{display:flex; justify-content:space-between; align-items:center; font-size:13.5px; padding:6px 0; gap:8px;}
 .cart-line .qty-controls{display:flex; align-items:center; gap:6px;}
-.cart-line .qty-controls button{width:24px; height:24px; border-radius:50%; border:1.5px solid var(--line); background:var(--card); cursor:pointer; font-family:'Space Mono', monospace; font-size:12px; line-height:1;}
+.cart-line .qty-controls button{width:26px; height:26px; border-radius:50%; border:1.5px solid var(--line); background:var(--card); cursor:pointer; font-family:'Space Mono', monospace; font-size:13px; line-height:1;}
 .cart-empty{font-size:13.5px; color:var(--ink-soft); text-align:center; padding:14px 0;}
 .cart-total{display:flex; justify-content:space-between; font-family:'Space Mono', monospace; font-weight:700; font-size:15px; margin-bottom:16px;}
 .modal-box .field input, .modal-box .field textarea{width:100%; padding:12px 14px; border-radius:10px; border:1.5px solid var(--line); font-family:'Inter', sans-serif; font-size:14px; background:var(--card); resize:vertical;}
@@ -178,7 +227,7 @@ header{position:sticky; top:0; z-index:100; background:rgba(251,243,234,0.92); b
 .pm-media img{width:100%; height:100%; object-fit:cover; display:block;}
 .pm-media .badge{position:absolute; top:12px; right:12px;}
 .pm-thumbs{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
-.pm-info h2{font-size:22px; margin-bottom:6px; padding-right:26px;}
+.pm-info h2{font-size:22px; margin-bottom:6px; padding-right:52px;}
 .pm-price{font-family:'Space Mono', monospace; font-weight:700; font-size:19px; margin-bottom:12px;}
 .pm-desc{font-size:14px; color:var(--ink-soft); line-height:1.6; margin-bottom:14px;}
 .pm-actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
@@ -228,8 +277,6 @@ footer{padding:50px 0 30px; border-top:1px solid var(--line);}
   .price{font-size:15.5px;}
   .thumb{width:38px; height:38px;}
 }
-
-/* Мобильный — 2 товара в ряд */
 @media (max-width: 640px){
   .wrap{padding:0 14px;}
   .grid{grid-template-columns:repeat(2, 1fr); gap:12px;}
@@ -253,7 +300,8 @@ footer{padding:50px 0 30px; border-top:1px solid var(--line);}
   .color-dial{max-width:260px; gap:8px;}
   .swatch{width:26px; height:26px;}
   .modal-overlay{padding:10px;}
-  .modal-box{padding:20px 16px; border-radius:18px;}
+  .modal-box{padding:20px 16px; border-radius:18px; max-height:94vh; padding-top:56px;}
+  .modal-box h3{font-size:17px; padding-right:48px;}
   .section-head{margin-bottom:24px;}
   .hero-ctas{gap:10px;}
   .trust-row{gap:14px;}
@@ -261,9 +309,9 @@ footer{padding:50px 0 30px; border-top:1px solid var(--line);}
   .foot-bottom{font-size:11.5px;}
   .cart-line{font-size:12.5px;}
   .cart-line .qty-controls{gap:5px;}
+  .modal-close{ top:10px; right:10px; width:48px; height:48px; min-width:48px; min-height:48px; }
   #bxbpay-widget, #bxbpay-widget iframe{min-height:600px !important;}
 }
-
 @media (max-width: 380px){
   .logo{font-size:19px;}
   .hero h1{font-size:24px;}
