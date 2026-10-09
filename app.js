@@ -79,7 +79,7 @@ const PRODUCTS = [
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdznb";
 const BXB_WORKER_ENDPOINT = "https://wiggle-house.vercel.app/api/payment";
-const BXB_TEST_MODE = true;
+const BXB_TEST_MODE = false;
 const BXB_WIDGET_JS = BXB_TEST_MODE
   ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
   : "https://pgate.bxb.delivery/js/bxbpay-widget.js";
