@@ -78,7 +78,7 @@ const PRODUCTS = [
 ];
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/xqpzdznb";
-const BXB_WORKER_ENDPOINT = "https://wiggle-house.vercel.app/api/payment";
+const BXB_WORKER_ENDPOINT = "/api/payment";
 const BXB_TEST_MODE = false;
 const BXB_WIDGET_JS = BXB_TEST_MODE
   ? "https://pgate-dev.bxb.delivery/js/bxbpay-widget.js"
@@ -544,17 +544,19 @@ async function payWithBXB(){
   const invoiceNumber = 'WH-' + Date.now().toString().slice(-10);
 
   try {
-    const res = await fetch(BXB_WORKER_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ invoiceNumber, amount: amountNum, currency: 'USD' })
-    });
+    // Запускаем запрос токена и загрузку скрипта BXB одновременно.
+    const [res] = await Promise.all([
+      fetch(BXB_WORKER_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ invoiceNumber, amount: amountNum, currency: 'USD' })
+      }),
+      loadBxbScript()
+    ]);
     const rawText = await res.text();
     let data;
-    try { data = JSON.parse(rawText); } catch { throw new Error(`Worker returned non-JSON: ${rawText.slice(0,300)}`); }
-    if (!data.result || !data.token) throw new Error(`Worker error: ${JSON.stringify(data).slice(0,300)}`);
-
-    await loadBxbScript();
+    try { data = JSON.parse(rawText); } catch { throw new Error(`Payment server returned non-JSON (HTTP ${res.status}): ${rawText.slice(0,300)}`); }
+    if (!res.ok || !data.result || !data.token) throw new Error(`Payment server error (HTTP ${res.status}): ${JSON.stringify(data).slice(0,300)}`);
     const widgetEl = $('#bxbpay-widget');
     widgetEl.style.display = 'block';
     btn.style.display = 'none';
